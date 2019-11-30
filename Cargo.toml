@@ -1,0 +1,11 @@
+[package]
+name = "aoc_2019"
+version = "0.1.0"
+authors = ["Matt Smith <trebinor@users.noreply.github.com>"]
+
+[lib]
+bench = false
+
+[dependencies]
+aoc-runner = "0.2.2"
+aoc-runner-derive = "0.2.2"
