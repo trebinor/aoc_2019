@@ -8,9 +8,12 @@ pub fn original_2a(input: &str) -> u32 {
         .collect();
     v[1] = 12;
     v[2] = 2;
+    compute(&mut v)
+}
+
+fn compute(mut v: &mut Vec<u32>) -> u32 {
     let mut i: usize = 0;
     loop {
-        println!("{:?}", v);
         match v[i] {
             1 => do_opcode_1(&mut v, i),
             2 => do_opcode_2(&mut v, i),
@@ -20,13 +23,6 @@ pub fn original_2a(input: &str) -> u32 {
         i += 4;
     }
     v[0]
-    /*
-    input
-        .lines()
-        .map(|l| l.trim().parse::<f32>().unwrap())
-        .map(|f| ((f / 3.0) as i32) - 2)
-        .sum()
-    */
 }
 
 fn do_opcode_1(v: &mut Vec<u32>, i: usize) {
@@ -42,6 +38,25 @@ fn do_opcode_2(v: &mut Vec<u32>, i: usize) {
     v[loc] = v[oi1] * v[oi2];
 }
 
+const PART2_EXPECTED_OUTPUT: u32 = 19690720;
+#[aoc(day02, part2, original)]
+pub fn original_1b(input: &str) -> u32 {
+    let v: Vec<u32> = input
+        .split(',')
+        .map(|n| n.parse::<u32>().unwrap())
+        .collect();
+    for noun in 0..99 {
+        for verb in 0..99 {
+            let mut v_cloned = v.clone();
+            v_cloned[1] = noun;
+            v_cloned[2] = verb;
+            if compute(&mut v_cloned) == PART2_EXPECTED_OUTPUT {
+                return 100 * noun + verb;
+            }
+        }
+    }
+    panic!()
+}
 /*
 #[aoc(day01, part2, original)]
 pub fn original_1b(input: &str) -> i32 {
