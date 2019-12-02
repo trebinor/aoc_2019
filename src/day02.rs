@@ -1,14 +1,18 @@
-use std::cmp;
+//use std::cmp;
 
-#[aoc(day01, part1, original)]
-pub fn original_1a(input: &str) -> i32 {
+#[aoc(day02, part1, original)]
+pub fn original_2a(input: &str) -> i32 {
+
+    /*
     input
         .lines()
         .map(|l| l.trim().parse::<f32>().unwrap())
         .map(|f| ((f / 3.0) as i32) - 2)
         .sum()
+    */
 }
 
+/*
 #[aoc(day01, part2, original)]
 pub fn original_1b(input: &str) -> i32 {
     let modules = input.lines().map(|l| l.trim().parse::<i32>().unwrap());
@@ -77,3 +81,4 @@ mod tests {
         );
     }
 }
+*/
