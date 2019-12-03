@@ -9,12 +9,12 @@ struct GridPoint {
 #[aoc(day03, part1, original)]
 pub fn original_3a(input: &str) -> u32 {
     let v: Vec<&str> = input.split('\n').collect();
-    let mut v1 = v[0].trim().split(',').collect();
-    let mut v2 = v[1].trim().split(',').collect();
+    let v1 = v[0].trim().split(',').collect();
+    let v2 = v[1].trim().split(',').collect();
     let mut grid1 = vec![vec![false; GRID_X]; GRID_Y];
     let mut grid2 = vec![vec![false; GRID_X]; GRID_Y];
-    mut_grid(&mut grid1, &mut v1);
-    mut_grid(&mut grid2, &mut v2);
+    mut_grid_3a(&mut grid1, v1);
+    mut_grid_3a(&mut grid2, v2);
 
     let mut manhattans = Vec::new();
     for x in 0..GRID_X {
@@ -23,7 +23,6 @@ pub fn original_3a(input: &str) -> u32 {
                 let manhattan = ((x as i32) - (GRID_X as i32) / 2).abs()
                     + ((y as i32) - (GRID_Y as i32) / 2).abs();
                 if manhattan != 0 {
-                    println!("({},{}) {}", x, y, manhattan);
                     manhattans.push(manhattan);
                 }
             }
@@ -32,7 +31,7 @@ pub fn original_3a(input: &str) -> u32 {
     *manhattans.iter().min().unwrap() as u32
 }
 
-fn mut_grid(grid: &mut Vec<Vec<bool>>, wires: &mut Vec<&str>) {
+fn mut_grid_3a(grid: &mut Vec<Vec<bool>>, wires: Vec<&str>) {
     let mut grid_point: GridPoint = GridPoint {
         x: GRID_X / 2,
         y: GRID_Y / 2,
@@ -64,16 +63,46 @@ fn mut_grid(grid: &mut Vec<Vec<bool>>, wires: &mut Vec<&str>) {
     }
 }
 
-//const PART2_EXPECTED_OUTPUT: u32 = 19690720;
+fn mut_grid_3b(grid: &mut Vec<Vec<bool>>, wires: &mut Vec<&str>) {
+    let mut grid_point: GridPoint = GridPoint {
+        x: GRID_X / 2,
+        y: GRID_Y / 2,
+    };
+    for w in wires {
+        let dir = w.chars().next().unwrap();
+        let dist = w.get(1..).unwrap().parse::<usize>().unwrap();
+        if dir == 'R' {
+            for d in 0..dist {
+                grid[grid_point.x + d][grid_point.y] = true;
+            }
+            grid_point.x += dist;
+        } else if dir == 'U' {
+            for d in 0..dist {
+                grid[grid_point.x][grid_point.y + d] = true;
+            }
+            grid_point.y += dist;
+        } else if dir == 'L' {
+            for d in 0..dist {
+                grid[grid_point.x - d][grid_point.y] = true;
+            }
+            grid_point.x -= dist;
+        } else if dir == 'D' {
+            for d in 0..dist {
+                grid[grid_point.x][grid_point.y - d] = true;
+            }
+            grid_point.y -= dist;
+        }
+    }
+}
 #[aoc(day03, part2, original)]
-pub fn original_3b(input: &str) -> usize {
+pub fn original_3b(input: &str) -> u32 {
     let v: Vec<&str> = input.split('\n').collect();
     let mut v1 = v[0].trim().split(',').collect();
     let mut v2 = v[1].trim().split(',').collect();
     let mut grid1 = vec![vec![false; GRID_X]; GRID_Y];
     let mut grid2 = vec![vec![false; GRID_X]; GRID_Y];
-    mut_grid(&mut grid1, &mut v1);
-    mut_grid(&mut grid2, &mut v2);
+    mut_grid_3b(&mut grid1, &mut v1);
+    mut_grid_3b(&mut grid2, &mut v2);
 
     let mut intersections = Vec::new();
     for x in 0..GRID_X {
@@ -97,7 +126,7 @@ pub fn original_3b(input: &str) -> usize {
                 x.cmp(y)
             }
         })
-        .unwrap()
+        .unwrap() as u32
 }
 
 fn walk_wires(i: &mut GridPoint, wires: &mut Vec<&str>) -> usize {
