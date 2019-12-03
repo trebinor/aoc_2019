@@ -1,41 +1,54 @@
+const GRID_X: usize = 30000;
+const GRID_Y: usize = 30000;
+
+struct Wire {
+    x: usize,
+    y: usize,
+}
+
 #[aoc(day03, part1, original)]
 pub fn original_3a(input: &str) -> u32 {
-    let mut v: Vec<u32> = input
-        .split(',')
-        .map(|n| n.parse::<u32>().unwrap())
-        .collect();
-    v[1] = 12;
-    v[2] = 2;
-    compute(&mut v)
+    let v: Vec<&str> = input.split('\n').collect();
+    let v1 = v[0].trim().split(',').collect();
+    let v2 = v[1].trim().split(',').collect();
+    let mut grid = vec![vec![0; GRID_X]; GRID_Y];
+    mut_grid(&mut grid, v1);
+    mut_grid(&mut grid, v2);
 }
 
-fn compute(mut v: &mut Vec<u32>) -> u32 {
-    let mut i: usize = 0;
-    loop {
-        match v[i] {
-            1 => do_opcode_1(&mut v, i),
-            2 => do_opcode_2(&mut v, i),
-            99 => break,
-            _ => panic!(),
+fn mut_grid(grid: &mut Vec<Vec<u32>>, wires: Vec<&str>) {
+    let mut wire: Wire = Wire {
+        x: GRID_X / 2,
+        y: GRID_Y / 2,
+    };
+    for w in wires {
+        let dir = w.chars().next().unwrap();
+        let dist = w.get(1..).unwrap().parse::<usize>().unwrap();
+        if dir == 'R' {
+            for d in 0..dist {
+                grid[wire.x + d][wire.y] += 1;
+            }
+            wire.x += dist;
+        } else if dir == 'U' {
+            for d in 0..dist {
+                grid[wire.x][wire.y + d] += 1;
+            }
+            wire.y += dist;
+        } else if dir == 'L' {
+            for d in 0..dist {
+                grid[wire.x - d][wire.y] += 1;
+            }
+            wire.x -= dist;
+        } else if dir == 'D' {
+            for d in 0..dist {
+                grid[wire.x][wire.y - d] += 1;
+            }
+            wire.y -= dist;
         }
-        i += 4;
     }
-    v[0]
 }
 
-fn do_opcode_1(v: &mut Vec<u32>, i: usize) {
-    let ia1: usize = v[i + 1] as usize;
-    let ia2: usize = v[i + 2] as usize;
-    let oa: usize = v[i + 3] as usize;
-    v[oa] = v[ia1] + v[ia2];
-}
-fn do_opcode_2(v: &mut Vec<u32>, i: usize) {
-    let ia1: usize = v[i + 1] as usize;
-    let ia2: usize = v[i + 2] as usize;
-    let oa: usize = v[i + 3] as usize;
-    v[oa] = v[ia1] * v[ia2];
-}
-
+/*
 const PART2_EXPECTED_OUTPUT: u32 = 19690720;
 #[aoc(day03, part2, original)]
 pub fn original_3b(input: &str) -> u32 {
@@ -55,7 +68,7 @@ pub fn original_3b(input: &str) -> u32 {
     }
     panic!()
 }
-
+*/
 #[cfg(test)]
 mod tests {
     use day03::original_3a;
