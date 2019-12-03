@@ -1,5 +1,5 @@
-#[aoc(day02, part1, original)]
-pub fn original_2a(input: &str) -> u32 {
+#[aoc(day03, part1, original)]
+pub fn original_3a(input: &str) -> u32 {
     let mut v: Vec<u32> = input
         .split(',')
         .map(|n| n.parse::<u32>().unwrap())
@@ -37,8 +37,8 @@ fn do_opcode_2(v: &mut Vec<u32>, i: usize) {
 }
 
 const PART2_EXPECTED_OUTPUT: u32 = 19690720;
-#[aoc(day02, part2, original)]
-pub fn original_2b(input: &str) -> u32 {
+#[aoc(day03, part2, original)]
+pub fn original_3b(input: &str) -> u32 {
     let v: Vec<u32> = input
         .split(',')
         .map(|n| n.parse::<u32>().unwrap())
@@ -58,21 +58,21 @@ pub fn original_2b(input: &str) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use day02::original_2a;
-    use day02::original_2b;
+    use day03::original_3a;
+    use day03::original_3b;
     use std::fs;
-    const ANSWER_2A: u32 = 5866714;
-    const ANSWER_2B: u32 = 5208;
+    const ANSWER_3A: u32 = 5866714;
+    const ANSWER_3B: u32 = 5208;
 
     #[test]
     fn original() {
         assert_eq!(
-            ANSWER_2A,
-            original_2a(&fs::read_to_string("input/2019/day2.txt").unwrap().trim())
+            ANSWER_3A,
+            original_3a(&fs::read_to_string("input/2019/day3.txt").unwrap().trim())
         );
         assert_eq!(
-            ANSWER_2B,
-            original_2b(&fs::read_to_string("input/2019/day2.txt").unwrap().trim())
+            ANSWER_3B,
+            original_3b(&fs::read_to_string("input/2019/day3.txt").unwrap().trim())
         );
     }
 }

@@ -69,11 +69,11 @@ mod tests {
     fn original() {
         assert_eq!(
             ANSWER_1A,
-            original_1a(&fs::read_to_string("input/2019/day1.txt").unwrap())
+            original_1a(&fs::read_to_string("input/2019/day1.txt").unwrap().trim())
         );
         assert_eq!(
             ANSWER_1B,
-            original_1b(&fs::read_to_string("input/2019/day1.txt").unwrap())
+            original_1b(&fs::read_to_string("input/2019/day1.txt").unwrap().trim())
         );
     }
 }
