@@ -11,6 +11,21 @@ pub fn original_4a(_input: &str) -> u32 {
     count
 }
 
+#[aoc(day04, part1, parsed)]
+pub fn parsed_4a(input: &str) -> u32 {
+    let v: Vec<i32> = input
+        .splitn(2, '-')
+        .map(|m| m.parse::<i32>().unwrap())
+        .collect();
+    let mut count = 0;
+    (v[0]..=v[1]).for_each(|i: i32| {
+        if is_a_double_digit(i) && is_monotonically_increasing(i) {
+            count += 1
+        }
+    });
+    count
+}
+
 fn is_a_double_digit(i: i32) -> bool {
     let s: Vec<u32> = i
         .to_string()
@@ -19,11 +34,9 @@ fn is_a_double_digit(i: i32) -> bool {
         .collect();
     for d in 0..5 {
         if s[d] == s[d + 1] {
-            //println!("{} contains double digit", i);
             return true;
         }
     }
-    //println!("{} contains no double digit", i);
     false
 }
 
@@ -37,11 +50,9 @@ fn is_monotonically_increasing(i: i32) -> bool {
         if s[d] <= s[d + 1] {
             continue;
         } else {
-            //println!("{} not increasing", i);
             return false;
         }
     }
-    //println!("{} is increasing", i);
     true
 }
 
@@ -54,18 +65,14 @@ fn is_a_double_digit_strict(i: i32) -> bool {
     for d in 0..5 {
         if s[d] == s[d + 1] {
             if d == 0 && s[d] != s[d + 2] {
-                //println!("{} contains strict double digit", i);
                 return true;
             } else if d == 4 && s[d - 1] != s[d] {
-                //println!("{} contains strict double digit", i);
                 return true;
             } else if (d == 1 || d == 2 || d == 3) && (s[d - 1] != s[d] && s[d + 2] != s[d]) {
-                //println!("{} contains strict double digit", i);
                 return true;
             }
         }
     }
-    //println!("{} contains no strict double digit", i);
     false
 }
 
@@ -82,10 +89,27 @@ pub fn original_4b(_input: &str) -> u32 {
     count
 }
 
+#[aoc(day04, part2, parsed)]
+pub fn parsed_4b(input: &str) -> u32 {
+    let v: Vec<i32> = input
+        .splitn(2, '-')
+        .map(|m| m.parse::<i32>().unwrap())
+        .collect();
+    let mut count = 0;
+    (v[0]..=v[1]).for_each(|i: i32| {
+        if is_a_double_digit_strict(i) && is_monotonically_increasing(i) {
+            count += 1
+        }
+    });
+    count
+}
+
 #[cfg(test)]
 mod tests {
     use day04::original_4a;
     use day04::original_4b;
+    use day04::parsed_4a;
+    use day04::parsed_4b;
     use std::fs;
     const ANSWER_4A: u32 = 921;
     const ANSWER_4B: u32 = 603;
@@ -99,6 +123,18 @@ mod tests {
         assert_eq!(
             ANSWER_4B,
             original_4b(&fs::read_to_string("input/2019/day4.txt").unwrap().trim())
+        );
+    }
+
+    #[test]
+    fn parsed() {
+        assert_eq!(
+            ANSWER_4A,
+            parsed_4a(&fs::read_to_string("input/2019/day4.txt").unwrap().trim())
+        );
+        assert_eq!(
+            ANSWER_4B,
+            parsed_4b(&fs::read_to_string("input/2019/day4.txt").unwrap().trim())
         );
     }
 }
