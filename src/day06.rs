@@ -28,34 +28,24 @@ pub fn original_6b(input: &str) -> u32 {
     let mut orbital_transfers = 0;
     let mut you_parents: Vec<&str> = Vec::new();
     let mut san_parents: Vec<&str> = Vec::new();
-    for mut parent in objects.keys() {
-        while let Some(mut node) = objects.get(parent) {
-            match Some(parent) {
-                Some(&"YOU") => {
-                    while let Some(you_parent) = objects.get(*node) {
-                        you_parents.push(you_parent);
-                        node = you_parent;
-                    }
-                }
-                Some(&"SAN") => {
-                    while let Some(san_parent) = objects.get(*node) {
-                        san_parents.push(san_parent);
-                        node = san_parent;
-                    }
-                }
-                Some(&&_) => (),
-                None => (),
-            }
-            parent = node;
-        }
+    let mut you_orbits_chain = objects.get("YOU");
+    let mut san_orbits_chain = objects.get("SAN");
+    while let Some(node) = you_orbits_chain {
+        you_parents.push(you_orbits_chain.unwrap());
+        you_orbits_chain = objects.get(node);
     }
-    'outer: for y in you_parents {
+    while let Some(node) = san_orbits_chain {
+        san_parents.push(san_orbits_chain.unwrap());
+        san_orbits_chain = objects.get(node);
+    }
+
+    for y in you_parents {
         if let Some(pos) = san_parents.iter().position(|n| *n == y) {
-            println!("pos{} y{}", pos, y);
             orbital_transfers += pos as u32;
-            break 'outer;
+            break;
+        } else {
+            orbital_transfers += 1;
         }
-        orbital_transfers += 1;
     }
     orbital_transfers
 }
@@ -65,8 +55,8 @@ mod tests {
     use day06::original_6a;
     use day06::original_6b;
     use std::fs;
-    const ANSWER_6A: i32 = 3369286;
-    const ANSWER_6B: i32 = 5051054;
+    const ANSWER_6A: u32 = 147223;
+    const ANSWER_6B: u32 = 340;
 
     #[test]
     fn original() {
