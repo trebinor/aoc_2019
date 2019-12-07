@@ -1,3 +1,5 @@
+use icc::IntCodeComputer;
+
 #[aoc(day05, part1, original)]
 pub fn original_5a(input: &str) -> String {
     let mut v: Vec<i32> = input
@@ -186,8 +188,39 @@ fn compute_5b(v: &mut Vec<i32>) -> String {
     }
     output
 }
+
+#[aoc(day05, part1, icc)]
+pub fn icc_5a(input: &str) -> String {
+    let v: Vec<i32> = input
+        .split(',')
+        .map(|o| o.parse::<i32>().unwrap())
+        .collect();
+    let mut icc = IntCodeComputer {
+        program: v,
+        pc: 0,
+        input: 1,
+    };
+    icc.execute().to_string()
+}
+
+#[aoc(day05, part2, icc)]
+pub fn icc_5b(input: &str) -> String {
+    let v: Vec<i32> = input
+        .split(',')
+        .map(|o| o.parse::<i32>().unwrap())
+        .collect();
+    let mut icc = IntCodeComputer {
+        program: v,
+        pc: 0,
+        input: 5,
+    };
+    icc.execute().to_string()
+}
+
 #[cfg(test)]
 mod tests {
+    use day05::icc_5a;
+    use day05::icc_5b;
     use day05::original_5a;
     use day05::original_5b;
     use std::fs;
@@ -203,6 +236,16 @@ mod tests {
         assert!(
             original_5b(&fs::read_to_string("input/2019/day5.txt").unwrap().trim())
                 .ends_with(ANSWER_5B)
+        );
+    }
+
+    #[test]
+    fn icc() {
+        assert!(
+            icc_5a(&fs::read_to_string("input/2019/day5.txt").unwrap().trim()).ends_with(ANSWER_5A)
+        );
+        assert!(
+            icc_5b(&fs::read_to_string("input/2019/day5.txt").unwrap().trim()).ends_with(ANSWER_5B)
         );
     }
 }
