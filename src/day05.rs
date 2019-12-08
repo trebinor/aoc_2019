@@ -204,7 +204,11 @@ pub fn icc_5a(input: &str) -> String {
         input0_read: false,
         terminated: false,
     };
-    icc.execute().to_string()
+    let mut output = "".to_string();
+    while !icc.terminated {
+        output.push_str(&format!("{}", icc.execute()));
+    }
+    output
 }
 
 #[aoc(day05, part2, icc)]
