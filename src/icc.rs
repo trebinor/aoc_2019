@@ -12,18 +12,23 @@ enum Operation {
     Equals,
 }
 
+#[derive(Clone)]
 pub struct IntCodeComputer {
     pub program: Vec<i32>,
     pub pc: usize,
-    pub input: i32,
+    pub input0: i32,
+    pub input1: i32,
+    pub input0_read: bool,
+    pub output: i32,
+    pub terminated: bool,
 }
 
 impl IntCodeComputer {
     pub fn execute(&mut self) -> i32 {
-        let mut output: String = "".to_string();
         loop {
             let s = format!("{:0>5}", self.program[self.pc].to_string());
             let mut c = s.chars();
+            //println!("{:?}", c);
             let _p2 = c.next();
             let p1 = match c.next().unwrap() {
                 '0' => ParameterMode::Position,
@@ -36,20 +41,28 @@ impl IntCodeComputer {
                 _ => unreachable!(),
             };
             let operation = c.take(2).collect::<String>().parse::<i32>().unwrap();
+            //println!("operation={}", operation);
             match operation {
                 1 => self.add(p0, p1),
                 2 => self.mul(p0, p1),
                 3 => self.store(),
-                4 => output.push_str(&self.show(p0)),
+                //4 => output.push_str(&self.show(p0)),
+                4 => {
+                    self.output = self.show(p0).parse::<i32>().unwrap();
+                    break;
+                }
                 5 => self.conditional(p0, p1, Operation::JumpIfTrue),
                 6 => self.conditional(p0, p1, Operation::JumpIfFalse),
                 7 => self.conditional(p0, p1, Operation::LessThan),
                 8 => self.conditional(p0, p1, Operation::Equals),
-                99 => break,
+                99 => {
+                    self.terminated = true;
+                    break;
+                }
                 _ => panic!(),
             }
         }
-        output.parse::<i32>().unwrap()
+        self.output
     }
 
     fn immediate(&self, offset: usize) -> i32 {
@@ -90,7 +103,12 @@ impl IntCodeComputer {
 
     fn store(&mut self) {
         let output_addr = self.immediate(1);
-        self.program[output_addr as usize] = self.input;
+        self.program[output_addr as usize] = if self.input0_read {
+            self.input1
+        } else {
+            self.input0_read = true;
+            self.input0
+        };
         self.pc += 2;
     }
 

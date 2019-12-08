@@ -4,6 +4,7 @@ extern crate aoc_runner;
 extern crate aoc_runner_derive;
 
 extern crate itertools;
+extern crate regex;
 
 pub mod day01;
 pub mod day02;

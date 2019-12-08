@@ -198,7 +198,11 @@ pub fn icc_5a(input: &str) -> String {
     let mut icc = IntCodeComputer {
         program: v,
         pc: 0,
-        input: 1,
+        input0: 1,
+        input1: 0,
+        output: 0,
+        input0_read: false,
+        terminated: false,
     };
     icc.execute().to_string()
 }
@@ -212,7 +216,11 @@ pub fn icc_5b(input: &str) -> String {
     let mut icc = IntCodeComputer {
         program: v,
         pc: 0,
-        input: 5,
+        input0: 5,
+        input1: 0,
+        output: 0,
+        input0_read: false,
+        terminated: false,
     };
     icc.execute().to_string()
 }
