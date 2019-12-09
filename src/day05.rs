@@ -2,16 +2,16 @@ use icc::IntCodeComputer;
 
 #[aoc(day05, part1, original)]
 pub fn original_5a(input: &str) -> String {
-    let mut v: Vec<i32> = input
+    let mut v: Vec<i64> = input
         .split(',')
-        .map(|o| o.parse::<i32>().unwrap())
+        .map(|o| o.parse::<i64>().unwrap())
         .collect();
     compute_5a(&mut v)
 }
 
-fn compute_5a(v: &mut Vec<i32>) -> String {
+fn compute_5a(v: &mut Vec<i64>) -> String {
     let mut pc: usize = 0;
-    const INPUT: i32 = 1;
+    const INPUT: i64 = 1;
     let mut output: String = "".to_string();
     loop {
         let s = format!("{:0>5}", v[pc].to_string());
@@ -27,7 +27,7 @@ fn compute_5a(v: &mut Vec<i32>) -> String {
             '1' => ParameterMode::Immediate,
             _ => unreachable!(),
         };
-        let operation = c.take(2).collect::<String>().parse::<i32>().unwrap();
+        let operation = c.take(2).collect::<String>().parse::<i64>().unwrap();
         match operation {
             1 => add(v, &mut pc, p0, p1),
             2 => mul(v, &mut pc, p0, p1),
@@ -46,7 +46,7 @@ enum ParameterMode {
     Immediate,
 }
 
-fn add(v: &mut Vec<i32>, pc: &mut usize, p0: ParameterMode, p1: ParameterMode) {
+fn add(v: &mut Vec<i64>, pc: &mut usize, p0: ParameterMode, p1: ParameterMode) {
     let ia0 = v[*pc + 1];
     let ia1 = v[*pc + 2];
     let oa = v[*pc + 3];
@@ -62,7 +62,7 @@ fn add(v: &mut Vec<i32>, pc: &mut usize, p0: ParameterMode, p1: ParameterMode) {
     *pc += 4;
 }
 
-fn mul(v: &mut Vec<i32>, pc: &mut usize, p0: ParameterMode, p1: ParameterMode) {
+fn mul(v: &mut Vec<i64>, pc: &mut usize, p0: ParameterMode, p1: ParameterMode) {
     let ia0 = v[*pc + 1];
     let ia1 = v[*pc + 2];
     let oa = v[*pc + 3];
@@ -78,7 +78,7 @@ fn mul(v: &mut Vec<i32>, pc: &mut usize, p0: ParameterMode, p1: ParameterMode) {
     *pc += 4;
 }
 
-fn store(v: &mut Vec<i32>, input: i32, pc: &mut usize, p0: ParameterMode) {
+fn store(v: &mut Vec<i64>, input: i64, pc: &mut usize, p0: ParameterMode) {
     let is0 = v[*pc + 1];
     let _s0 = match p0 {
         ParameterMode::Position => v[is0 as usize],
@@ -88,7 +88,7 @@ fn store(v: &mut Vec<i32>, input: i32, pc: &mut usize, p0: ParameterMode) {
     *pc += 2;
 }
 
-fn show(v: &mut Vec<i32>, pc: &mut usize, p0: ParameterMode) -> String {
+fn show(v: &mut Vec<i64>, pc: &mut usize, p0: ParameterMode) -> String {
     let is0 = v[*pc + 1];
     let s0 = match p0 {
         ParameterMode::Position => v[is0 as usize],
@@ -99,7 +99,7 @@ fn show(v: &mut Vec<i32>, pc: &mut usize, p0: ParameterMode) -> String {
 }
 
 fn operations_5_to_8(
-    v: &mut Vec<i32>,
+    v: &mut Vec<i64>,
     pc: &mut usize,
     p0: ParameterMode,
     p1: ParameterMode,
@@ -139,9 +139,9 @@ fn operations_5_to_8(
 
 #[aoc(day05, part2, original)]
 pub fn original_5b(input: &str) -> String {
-    let mut v: Vec<i32> = input
+    let mut v: Vec<i64> = input
         .split(',')
-        .map(|o| o.parse::<i32>().unwrap())
+        .map(|o| o.parse::<i64>().unwrap())
         .collect();
     compute_5b(&mut v)
 }
@@ -154,9 +154,9 @@ enum Operation {
     Equals,
 }
 
-fn compute_5b(v: &mut Vec<i32>) -> String {
+fn compute_5b(v: &mut Vec<i64>) -> String {
     let mut pc: usize = 0;
-    const INPUT: i32 = 5;
+    const INPUT: i64 = 5;
     let mut output: String = "".to_string();
     loop {
         let s = format!("{:0>5}", v[pc].to_string());
@@ -172,7 +172,7 @@ fn compute_5b(v: &mut Vec<i32>) -> String {
             '1' => ParameterMode::Immediate,
             _ => unreachable!(),
         };
-        let operation = c.take(2).collect::<String>().parse::<i32>().unwrap();
+        let operation = c.take(2).collect::<String>().parse::<i64>().unwrap();
         match operation {
             1 => add(v, &mut pc, p0, p1),
             2 => mul(v, &mut pc, p0, p1),
@@ -191,9 +191,9 @@ fn compute_5b(v: &mut Vec<i32>) -> String {
 
 #[aoc(day05, part1, icc)]
 pub fn icc_5a(input: &str) -> String {
-    let v: Vec<i32> = input
+    let v: Vec<i64> = input
         .split(',')
-        .map(|o| o.parse::<i32>().unwrap())
+        .map(|o| o.parse::<i64>().unwrap())
         .collect();
     let mut icc = IntCodeComputer {
         program: v,
@@ -203,6 +203,8 @@ pub fn icc_5a(input: &str) -> String {
         output: 0,
         input0_read: false,
         terminated: false,
+        relative_base: 0,
+        output_string: "".to_string(),
     };
     let mut output = "".to_string();
     while !icc.terminated {
@@ -213,9 +215,9 @@ pub fn icc_5a(input: &str) -> String {
 
 #[aoc(day05, part2, icc)]
 pub fn icc_5b(input: &str) -> String {
-    let v: Vec<i32> = input
+    let v: Vec<i64> = input
         .split(',')
-        .map(|o| o.parse::<i32>().unwrap())
+        .map(|o| o.parse::<i64>().unwrap())
         .collect();
     let mut icc = IntCodeComputer {
         program: v,
@@ -225,6 +227,8 @@ pub fn icc_5b(input: &str) -> String {
         output: 0,
         input0_read: false,
         terminated: false,
+        relative_base: 0,
+        output_string: "".to_string(),
     };
     icc.execute().to_string()
 }

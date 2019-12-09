@@ -101,7 +101,6 @@ fn layer_pixel(old: PixelColor, new: PixelColor) -> PixelColor {
 #[cfg(test)]
 mod tests {
     use day08::original_8a;
-    use day08::original_8b;
     use std::fs;
     const ANSWER_8A: u32 = 1064;
 
