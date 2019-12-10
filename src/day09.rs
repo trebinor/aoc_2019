@@ -10,17 +10,18 @@ pub fn original_9a(input: &str) -> i64 {
     let mut icc = IntCodeComputer {
         program: v.clone(),
         pc: 0,
-        input0: 1,
-        input1: 0,
-        output: 0,
-        input0_read: false,
+        input: 1,
+        amp_input: 0,
+        use_amp_input: false,
+        input_read: false,
+        break_on_output: false,
         terminated: false,
         relative_base: 0,
-        output_string: "".to_string(),
+        output: "".to_string(),
     };
     icc.program.resize(1024 * 1024, 0);
     icc.execute();
-    icc.show_output().parse().unwrap()
+    icc.consume_output().parse().unwrap()
 }
 
 #[aoc(day09, part2, original)]
@@ -33,17 +34,18 @@ pub fn original_9b(input: &str) -> i64 {
     let mut icc = IntCodeComputer {
         program: v.clone(),
         pc: 0,
-        input0: 2,
-        input1: 0,
-        output: 0,
-        input0_read: false,
+        input: 2,
+        amp_input: 0,
+        use_amp_input: false,
+        input_read: false,
+        break_on_output: false,
         terminated: false,
         relative_base: 0,
-        output_string: "".to_string(),
+        output: "".to_string(),
     };
     icc.program.resize(1024 * 1024, 0);
     icc.execute();
-    icc.show_output().parse().unwrap()
+    icc.consume_output().parse().unwrap()
 }
 
 #[cfg(test)]

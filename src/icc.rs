@@ -17,18 +17,19 @@ enum Operation {
 pub struct IntCodeComputer {
     pub program: Vec<i64>,
     pub pc: usize,
-    pub input0: i64,
-    pub input1: i64,
-    pub input0_read: bool,
-    pub output: i64,
+    pub input: i64,
+    pub amp_input: i64,
+    pub use_amp_input: bool,
+    pub input_read: bool,
+    pub break_on_output: bool,
     pub terminated: bool,
     pub relative_base: i64,
-    pub output_string: String,
+    pub output: String,
 }
 
 impl IntCodeComputer {
-    pub fn execute(&mut self) -> i64 {
-        loop {
+    pub fn execute(&mut self) {
+        'outer: loop {
             let s = format!("{:0>5}", self.program[self.pc].to_string());
             let mut c = s.chars();
             let p2 = match c.next().unwrap() {
@@ -56,8 +57,11 @@ impl IntCodeComputer {
                 3 => self.store(p0),
                 4 => {
                     //self.output = self.show(p0).parse::<i64>().unwrap();
-                    self.show(p0);
-                }
+                    self.produce_output(p0);
+                    if self.break_on_output {
+                        break 'outer;
+                    }
+                },
                 5 => self.conditional(p0, p1, p2, Operation::JumpIfTrue),
                 6 => self.conditional(p0, p1, p2, Operation::JumpIfFalse),
                 7 => self.conditional(p0, p1, p2, Operation::LessThan),
@@ -65,12 +69,11 @@ impl IntCodeComputer {
                 9 => self.relative_base(p0),
                 99 => {
                     self.terminated = true;
-                    break;
+                    break 'outer;
                 }
                 _ => panic!(),
             }
         }
-        self.output
     }
 
     fn immediate(&self, offset: usize) -> i64 {
@@ -139,29 +142,33 @@ impl IntCodeComputer {
             ParameterMode::Relative => self.relative_address(1),
             _ => unreachable!(),
         };
-        self.program[output_addr as usize] = if self.input0_read {
-            self.input1
+        if self.use_amp_input {
+            if self.input_read {
+                self.program[output_addr as usize] = self.amp_input;
+            } else {
+                self.input_read = true;
+                self.program[output_addr as usize] = self.input;
+            }
         } else {
-            self.input0_read = true;
-            self.input0
-        };
-
+            self.program[output_addr as usize] = self.input;
+        }
         self.pc += 2;
     }
 
-    fn show(&mut self, p0: ParameterMode) {
+    fn produce_output(&mut self, p0: ParameterMode) {
         let s0 = match p0 {
             ParameterMode::Position => self.position(1),
             ParameterMode::Immediate => self.immediate(1),
             ParameterMode::Relative => self.relative(1),
         };
         self.pc += 2;
-        //s0.to_string()
-        self.output_string.push_str(&s0.to_string());
+        self.output.push_str(&s0.to_string());
     }
 
-    pub fn show_output(self) -> String {
-        self.output_string
+    pub fn consume_output(&mut self) -> String {
+        let output = self.output.clone();
+        self.output.clear();
+        output
     }
 
     fn conditional(

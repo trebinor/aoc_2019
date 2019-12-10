@@ -18,22 +18,24 @@ pub fn original_7a(input: &str) -> i64 {
             IntCodeComputer {
                 program: v.clone(),
                 pc: 0,
-                input0: 0,
-                input1: 0,
-                output: 0,
-                input0_read: false,
+                input: 0,
+                amp_input: 0,
+                use_amp_input: true,
+                input_read: false,
+                break_on_output: false,
                 terminated: false,
                 relative_base: 0,
-                output_string: "".to_string(),
+                output: "".to_string(),
             };
             5
         ];
         let d = p.chars().flat_map(|c| c.to_digit(10)).collect::<Vec<u32>>();
         for i in 0..=4 {
-            amps[i].input0 = d[i] as i64;
-            let output = amps[i].execute();
+            amps[i].input = d[i] as i64;
+            amps[i].execute();
+            let output = amps[i].consume_output().parse::<i64>().unwrap();
             if i < 4 {
-                amps[i + 1].input1 = output;
+                amps[i + 1].amp_input = output;
             } else {
                 max_output = std::cmp::max(output, max_output);
             }
@@ -84,36 +86,42 @@ pub fn original_7b(input: &str) -> i64 {
         .collect::<Vec<String>>();
     let mut max_output: i64 = std::i64::MIN;
     for p in phases {
-        println!("Trying phase {}", p);
         let mut amps: Vec<IntCodeComputer> = vec![
             IntCodeComputer {
                 program: v.clone(),
                 pc: 0,
-                input0: 0,
-                input1: 0,
-                output: 0,
-                input0_read: false,
+                input: 0,
+                amp_input: 0,
+                use_amp_input: true,
+                input_read: false,
+                break_on_output: true,
                 terminated: false,
                 relative_base: 0,
-                output_string: "".to_string(),
+                output: "".to_string(),
             };
             5
         ];
         'this_phase: loop {
             let d = p.chars().flat_map(|c| c.to_digit(10)).collect::<Vec<u32>>();
             for i in 0..=4 {
-                amps[i].input0 = d[i] as i64;
-                let output = amps[i].execute();
-                println!("output[{}]={}", i, output);
+                amps[i].input = d[i] as i64;
+                amps[i].execute();
                 if i < 4 {
-                    amps[i + 1].input1 = output;
+                    if amps[i].terminated {
+                        continue;
+                    }
+                } else if amps[4].terminated {
+                    break 'this_phase;
+                }
+                let output = amps[i].consume_output().parse::<i64>().unwrap();
+                if i < 4 {
+                    amps[i + 1].amp_input = output;
                 } else {
                     max_output = std::cmp::max(output, max_output);
                     if amps[4].terminated {
                         break 'this_phase;
                     } else {
-                        amps[0].input1 = output;
-                        //amps[0].input0_read = false;
+                        amps[0].amp_input = output;
                     }
                 }
             }

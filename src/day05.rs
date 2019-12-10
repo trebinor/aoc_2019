@@ -201,17 +201,19 @@ pub fn icc_5a(input: &str) -> String {
     let mut icc = IntCodeComputer {
         program: v,
         pc: 0,
-        input0: 1,
-        input1: 0,
-        output: 0,
-        input0_read: false,
+        input: 1,
+        amp_input: 0,
+        use_amp_input: false,
+        input_read: false,
+        break_on_output: false,
         terminated: false,
         relative_base: 0,
-        output_string: "".to_string(),
+        output: "".to_string(),
     };
     let mut output = "".to_string();
     while !icc.terminated {
-        output.push_str(&format!("{}", icc.execute()));
+        icc.execute();
+        output.push_str(&format!("{}", icc.consume_output()));
     }
     output
 }
@@ -226,15 +228,17 @@ pub fn icc_5b(input: &str) -> String {
     let mut icc = IntCodeComputer {
         program: v,
         pc: 0,
-        input0: 5,
-        input1: 0,
-        output: 0,
-        input0_read: false,
+        input: 5,
+        amp_input: 0,
+        use_amp_input: false,
+        input_read: false,
+        break_on_output: false,
         terminated: false,
         relative_base: 0,
-        output_string: "".to_string(),
+        output: "".to_string(),
     };
-    icc.execute().to_string()
+    icc.execute();
+    icc.consume_output()
 }
 
 #[cfg(test)]
