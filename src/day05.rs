@@ -3,6 +3,7 @@ use icc::IntCodeComputer;
 #[aoc(day05, part1, original)]
 pub fn original_5a(input: &str) -> String {
     let mut v: Vec<i64> = input
+        .trim()
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
@@ -140,6 +141,7 @@ fn operations_5_to_8(
 #[aoc(day05, part2, original)]
 pub fn original_5b(input: &str) -> String {
     let mut v: Vec<i64> = input
+        .trim()
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
@@ -192,6 +194,7 @@ fn compute_5b(v: &mut Vec<i64>) -> String {
 #[aoc(day05, part1, icc)]
 pub fn icc_5a(input: &str) -> String {
     let v: Vec<i64> = input
+        .trim()
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
@@ -216,6 +219,7 @@ pub fn icc_5a(input: &str) -> String {
 #[aoc(day05, part2, icc)]
 pub fn icc_5b(input: &str) -> String {
     let v: Vec<i64> = input
+        .trim()
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();

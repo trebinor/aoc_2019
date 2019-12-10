@@ -3,6 +3,7 @@ use icc::IntCodeComputer;
 #[aoc(day09, part1, original)]
 pub fn original_9a(input: &str) -> i64 {
     let v: Vec<i64> = input
+        .trim()
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
@@ -25,6 +26,7 @@ pub fn original_9a(input: &str) -> i64 {
 #[aoc(day09, part2, original)]
 pub fn original_9b(input: &str) -> i64 {
     let v: Vec<i64> = input
+        .trim()
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();

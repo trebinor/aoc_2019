@@ -1,6 +1,7 @@
 #[aoc(day02, part1, original)]
 pub fn original_2a(input: &str) -> u32 {
     let mut v: Vec<u32> = input
+        .trim()
         .split(',')
         .map(|n| n.parse::<u32>().unwrap())
         .collect();
@@ -40,6 +41,7 @@ const PART2_EXPECTED_OUTPUT: u32 = 19690720;
 #[aoc(day02, part2, original)]
 pub fn original_2b(input: &str) -> u32 {
     let v: Vec<u32> = input
+        .trim()
         .split(',')
         .map(|n| n.parse::<u32>().unwrap())
         .collect();

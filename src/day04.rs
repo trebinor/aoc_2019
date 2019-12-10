@@ -14,6 +14,7 @@ pub fn original_4a(_input: &str) -> u32 {
 #[aoc(day04, part1, parsed)]
 pub fn parsed_4a(input: &str) -> u32 {
     let v: Vec<i32> = input
+        .trim()
         .splitn(2, '-')
         .map(|m| m.parse::<i32>().unwrap())
         .collect();
@@ -92,6 +93,7 @@ pub fn original_4b(_input: &str) -> u32 {
 #[aoc(day04, part2, parsed)]
 pub fn parsed_4b(input: &str) -> u32 {
     let v: Vec<i32> = input
+        .trim()
         .splitn(2, '-')
         .map(|m| m.parse::<i32>().unwrap())
         .collect();

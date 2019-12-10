@@ -1,11 +1,10 @@
 use icc::IntCodeComputer;
 use regex::Regex;
-//use itertools::Itertools;
-//use std::collections::HashMap;
 
 #[aoc(day07, part1, original)]
 pub fn original_7a(input: &str) -> i64 {
     let v: Vec<i64> = input
+        .trim()
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
@@ -75,6 +74,7 @@ fn phase_sequence_allowed_high(phases: i64) -> bool {
 #[aoc(day07, part2, original)]
 pub fn original_7b(input: &str) -> i64 {
     let v: Vec<i64> = input
+        .trim()
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
