@@ -61,7 +61,7 @@ impl IntCodeComputer {
                     if self.break_on_output {
                         break 'outer;
                     }
-                },
+                }
                 5 => self.conditional(p0, p1, p2, Operation::JumpIfTrue),
                 6 => self.conditional(p0, p1, p2, Operation::JumpIfFalse),
                 7 => self.conditional(p0, p1, p2, Operation::LessThan),
