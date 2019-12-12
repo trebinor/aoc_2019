@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-#[derive(Debug, Eq, Hash)]
+#[derive(Debug, Eq, Hash, Clone, Copy)]
 pub struct Point {
     x: usize,
     y: usize,
@@ -15,30 +15,51 @@ impl PartialEq for Point {
 }
 
 trait PointAnalysis {
-    fn find_best_point(&self) -> Point;
+    fn find_best_point(&mut self, &[Point]) -> Point;
 }
 
-impl PointAnalysis for AsteroidField {
-    fn find_best_point(&self) -> Point {
+impl PointAnalysis for AsteroidSightMap {
+    fn find_best_point(&mut self, asteroid_field: &[Point]) -> Point {
+        // Create keys in the sight map for all asteroids in the field
+        for a in asteroid_field {
+            self.entry(*a).or_default();
+        }
+
+        // Apply algorithm to each asteroid and update sight map
+        // TODO
+
+        // return point with largest count in hashset
         Point { x: 0, y: 0 }
     }
 }
 
 //https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
-type AsteroidField = HashMap<Point, HashSet<Point>>;
+type AsteroidSightMap = HashMap<Point, HashSet<Point>>;
+type AsteroidField = Vec<Point>;
 
 #[aoc_generator(day10)]
 pub fn generator(input: &str) -> AsteroidField {
-    let v: Vec<&str> = input.lines().map(|l| l.trim()).collect::<Vec<&str>>();
-    let mut asteroid_field: AsteroidField = HashMap::new();
+    let mut v = input.lines().map(|l| l.trim()).collect::<Vec<&str>>();
+    let mut asteroid_field: AsteroidField = AsteroidField::new();
+    for (i, l) in v.iter().enumerate() {
+        for (j, x) in l.chars().enumerate() {
+            match x {
+                '.' => (),
+                '#' => asteroid_field.push(Point { x: j, y: i }),
+                _ => unreachable!(),
+            }
+        }
+    }
     asteroid_field
 }
 
 #[aoc(day10, part1)]
-pub fn visible_asteroids(asteroid_field: &AsteroidField) -> u32 {
-    if let Some(point) = asteroid_field.get(&asteroid_field.find_best_point()) {
+pub fn visible_asteroids(asteroid_field: &[Point]) -> u32 {
+    let mut asteroid_sight_map = AsteroidSightMap::new();
+    let mut best_point = &asteroid_sight_map.find_best_point(asteroid_field);
+    if let Some(asteroids_visible_by_best_point) = &asteroid_sight_map.get(&best_point) {
         // how many asteroids for this point?
-        0
+        asteroids_visible_by_best_point.len() as u32
     } else {
         // None, so 0 asteroids
         0
