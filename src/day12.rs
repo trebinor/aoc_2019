@@ -1,5 +1,5 @@
+use num::Integer;
 use regex::Regex;
-use std::collections::HashSet;
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub struct Position {
@@ -8,28 +8,12 @@ pub struct Position {
     z: i32,
 }
 
-/*
-impl PartialEq for Position {
-    fn eq(&self, other: &Position) -> bool {
-        self.x == other.x && self.y == other.y && self.z == other.z
-    }
-}
-*/
-
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub struct Velocity {
     x: i32,
     y: i32,
     z: i32,
 }
-
-/*
-impl PartialEq for Velocity {
-    fn eq(&self, other: &Velocity) -> bool {
-        self.x == other.x && self.y == other.y && self.z == other.z
-    }
-}
-*/
 
 impl Position {
     pub fn new() -> Position {
@@ -48,14 +32,6 @@ pub struct PlanetaryBody {
     position: Position,
     velocity: Velocity,
 }
-
-/*
-impl PartialEq for PlanetaryBody {
-    fn eq(&self, other: &PlanetaryBody) -> bool {
-        self.position == other.position && self.velocity == other.velocity
-    }
-}
-*/
 
 impl PlanetaryBody {
     pub fn new() -> PlanetaryBody {
@@ -101,7 +77,7 @@ pub fn total_energy_all_planets(v: &[Position]) -> u64 {
         bodies.push(body);
     }
     for i in 1..=ITERATIONS {
-        //Is there a more rustic way to double-iterate over a vec?
+        //TODO: Is there a more rustic way to double-iterate over a vec?
         for a in 0..bodies.len() {
             for b in 0..bodies.len() {
                 if a == b {
@@ -151,10 +127,12 @@ pub fn part_2(v: &[Position]) -> u64 {
         body.position = *position;
         bodies.push(body);
     }
-    let mut n_body_simulation: HashSet<Vec<PlanetaryBody>> = HashSet::new();
+    let original_bodies = bodies.clone();
     let mut i: u64 = 0;
+    let mut x_period: Option<u64> = None;
+    let mut y_period: Option<u64> = None;
+    let mut z_period: Option<u64> = None;
     loop {
-        //why do these not work here, but they do work in part 1
         for a in 0..bodies.len() {
             for b in 0..bodies.len() {
                 if a == b {
@@ -190,9 +168,35 @@ pub fn part_2(v: &[Position]) -> u64 {
             bodies[a].position.z += bodies[a].velocity.z;
         }
         i += 1;
-        if !n_body_simulation.insert(bodies.clone()) {
+        if bodies[0].position.x == original_bodies[0].position.x
+            && bodies[1].position.x == original_bodies[1].position.x
+            && bodies[2].position.x == original_bodies[2].position.x
+            && bodies[3].position.x == original_bodies[3].position.x
+            && x_period.is_none()
+        {
+            x_period = Some(i);
+        }
+        if bodies[0].position.y == original_bodies[0].position.y
+            && bodies[1].position.y == original_bodies[1].position.y
+            && bodies[2].position.y == original_bodies[2].position.y
+            && bodies[3].position.y == original_bodies[3].position.y
+            && y_period.is_none()
+        {
+            y_period = Some(i);
+        }
+        if bodies[0].position.z == original_bodies[0].position.z
+            && bodies[1].position.z == original_bodies[1].position.z
+            && bodies[2].position.z == original_bodies[2].position.z
+            && bodies[3].position.z == original_bodies[3].position.z
+            && z_period.is_none()
+        {
+            z_period = Some(i);
+        }
+
+        if x_period.is_some() && y_period.is_some() && z_period.is_some() {
             break;
         }
     }
-    i
+    // Positions repeat one step at the calculated period because velocity is 0. Add 1 to each to compensate.
+    (x_period.unwrap() + 1).lcm(&(y_period.unwrap() + 1).lcm(&(z_period.unwrap() + 1)))
 }
