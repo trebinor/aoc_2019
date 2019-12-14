@@ -45,27 +45,45 @@ impl PointAnalysis for AsteroidSightMap {
                 while i as f32 <= step {
                     //println!("{} < {}", i as f32, step);
                     // put pixel at x,y.  if it intersects an asteroid other than target, continue
-                    if asteroid_field
-                        .iter()
-                        .find(|&&a| {
-                            a == Point {
-                                x: x as usize,
-                                y: y as usize,
-                            }
-                        })
-                        .is_some()
-                    {
-                        if x as usize == target.x && y as usize == target.y {
+                    let p = Point {
+                        x: x.round() as usize,
+                        y: y.round() as usize,
+                    };
+                    //println!("({},{}) and ({},{})", x, y, target.x, target.y);
+                    if asteroid_field.iter().any(|&a| a == p) {
+                        println!("Found point at {:?}", p);
+                        //println!("({},{}) and ({},{})", x, y, target.x, target.y);
+                        if x as usize == source.x && y as usize == source.y {
+                            x += dx;
+                            y += dy;
+                            i += 1;
+                            //println!("x={}, y={}, i={}, step={}", x, y, i, step);
+                            continue;
+                        } else if x as usize == target.x && y as usize == target.y {
+                            println!("Inserting found point at {:?} to source {:?}", p, source);
                             self.entry(*source).and_modify(|e| {
                                 e.insert(*target);
                             });
+                        } else {
+                            println!("Rejected point {:?}", p);
                         }
                         continue 'target;
                     } else {
                         x += dx;
                         y += dy;
                         i += 1;
+                        println!("  x={}, y={}, i={}, step={}", x, y, i, step);
                     }
+                }
+                let p = Point {
+                    x: x.round() as usize,
+                    y: y.round() as usize,
+                };
+                if x as usize == target.x && y as usize == target.y {
+                    println!("Inserting found point at {:?} to source {:?}", p, source);
+                    self.entry(*source).and_modify(|e| {
+                        e.insert(*target);
+                    });
                 }
             }
         }
@@ -177,7 +195,7 @@ mod tests {
     const UNIT_ANSWER_10A_4: Point = Point { x: 11, y: 13 };
 
     #[test]
-    fn original() {
+    fn original_10a() {
         assert_eq!(
             ANSWER_10A,
             visible_asteroids(&generator(
@@ -193,7 +211,7 @@ mod tests {
     }
 
     #[test]
-    fn supplied_inputs() {
+    fn supplied_inputs_10a() {
         assert_eq!(
             UNIT_ANSWER_10A_1,
             AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_1))
