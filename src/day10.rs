@@ -26,10 +26,55 @@ impl PointAnalysis for AsteroidSightMap {
         }
 
         // Apply algorithm to each asteroid and update sight map
-        // TODO
+        for source in asteroid_field {
+            'target: for target in asteroid_field {
+                println!("{:?} to {:?}", source, target);
+                // draw a ray
+                let mut dx = target.x as f32 - source.x as f32;
+                let mut dy = target.y as f32 - source.y as f32;
+                let step = if dx.abs() >= dy.abs() {
+                    dx.abs()
+                } else {
+                    dy.abs()
+                };
+                dx /= step;
+                dy /= step;
+                let mut x = source.x as f32;
+                let mut y = source.y as f32;
+                let mut i = 1;
+                while i as f32 <= step {
+                    //println!("{} < {}", i as f32, step);
+                    // put pixel at x,y.  if it intersects an asteroid other than target, continue
+                    if asteroid_field
+                        .iter()
+                        .find(|&&a| {
+                            a == Point {
+                                x: x as usize,
+                                y: y as usize,
+                            }
+                        })
+                        .is_some()
+                    {
+                        if x as usize == target.x && y as usize == target.y {
+                            self.entry(*source).and_modify(|e| {
+                                e.insert(*target);
+                            });
+                        }
+                        continue 'target;
+                    } else {
+                        x += dx;
+                        y += dy;
+                        i += 1;
+                    }
+                }
+            }
+        }
 
         // return point with largest count in hashset
-        Point { x: 0, y: 0 }
+        *self
+            .keys()
+            .max_by(|x, y| self.get(x).unwrap().len().cmp(&self.get(y).unwrap().len()))
+            .unwrap()
     }
 }
 
