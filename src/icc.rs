@@ -52,6 +52,7 @@ impl IntCodeComputer {
                 _ => unreachable!(),
             };
             self.previous_operation = c.take(2).collect::<String>().parse::<i64>().unwrap();
+            //println!("Operation: {:?}", self.previous_operation);
             match self.previous_operation {
                 1 => self.add(p0, p1, p2),
                 2 => self.mul(p0, p1, p2),

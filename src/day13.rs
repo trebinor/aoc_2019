@@ -1,6 +1,6 @@
 use icc::IntCodeComputer;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 enum Tile {
     Empty,
     Wall,
@@ -21,7 +21,7 @@ fn get_tile(tile_num: i64) -> Tile {
 }
 
 #[aoc(day13, part1)]
-pub fn original_13a(input: &str) -> i32 {
+pub fn original_13a(input: &str) -> i64 {
     let v: Vec<i64> = input
         .trim()
         .split(',')
@@ -41,7 +41,7 @@ pub fn original_13a(input: &str) -> i32 {
         previous_operation: 0,
     };
     icc.program.resize(1024 * 1024, 0);
-    let mut block_tiles: i32 = 0;
+    let mut block_tiles: i64 = 0;
     loop {
         icc.execute();
         if icc.terminated {
@@ -66,6 +66,7 @@ pub fn original_13b(input: &str) -> i64 {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
+    v[0] = 2; // 2 quarters
     let mut icc = IntCodeComputer {
         program: v.clone(),
         pc: 0,
@@ -80,7 +81,6 @@ pub fn original_13b(input: &str) -> i64 {
         previous_operation: 0,
     };
     icc.program.resize(1024 * 1024, 0);
-    v[0] = 2; // 2 quarters
     let mut score: i64 = 0;
     let mut block_tiles: i32 = 0;
     let mut paddle_x: i32 = 0;
@@ -90,7 +90,6 @@ pub fn original_13b(input: &str) -> i64 {
         if icc.terminated {
             break;
         } else if icc.previous_operation == 4 {
-            // TODO: outputs are not necessarily sequential. Track the state.
             let x: i32 = icc.consume_output().parse().unwrap();
             icc.execute();
             let y: i32 = icc.consume_output().parse().unwrap();
@@ -120,25 +119,23 @@ pub fn original_13b(input: &str) -> i64 {
     score
 }
 
-/*
 #[cfg(test)]
 mod tests {
-    use day09::original_9a;
-    use day09::original_9b;
+    use day13::original_13a;
+    use day13::original_13b;
     use std::fs;
-    const ANSWER_9A: i64 = 2932210790;
-    const ANSWER_9B: i64 = 73144;
+    const ANSWER_13A: i64 = 427;
+    const ANSWER_13B: i64 = 21426;
 
     #[test]
     fn original() {
         assert_eq!(
-            ANSWER_9A,
-            original_9a(&fs::read_to_string("input/2019/day9.txt").unwrap().trim())
+            ANSWER_13A,
+            original_13a(&fs::read_to_string("input/2019/day13.txt").unwrap().trim())
         );
         assert_eq!(
-            ANSWER_9B,
-            original_9b(&fs::read_to_string("input/2019/day9.txt").unwrap().trim())
+            ANSWER_13B,
+            original_13b(&fs::read_to_string("input/2019/day13.txt").unwrap().trim())
         );
     }
 }
-*/
