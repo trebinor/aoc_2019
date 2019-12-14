@@ -70,6 +70,7 @@ pub fn visible_asteroids(asteroid_field: &[Point]) -> u32 {
 mod tests {
     use day10::generator;
     use day10::visible_asteroids;
+    use day10::AsteroidSightMap;
     use day10::Point;
     use day10::PointAnalysis;
     use std::fs;
@@ -150,19 +151,19 @@ mod tests {
     fn supplied_inputs() {
         assert_eq!(
             UNIT_ANSWER_10A_1,
-            generator(UNIT_INPUT_10A_1).find_best_point()
+            AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_1))
         );
         assert_eq!(
             UNIT_ANSWER_10A_2,
-            generator(UNIT_INPUT_10A_2).find_best_point()
+            AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_2))
         );
         assert_eq!(
             UNIT_ANSWER_10A_3,
-            generator(UNIT_INPUT_10A_3).find_best_point()
+            AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_3))
         );
         assert_eq!(
             UNIT_ANSWER_10A_4,
-            generator(UNIT_INPUT_10A_4).find_best_point()
+            AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_4))
         );
         assert_eq!(33, visible_asteroids(&generator(UNIT_INPUT_10A_1)));
         assert_eq!(35, visible_asteroids(&generator(UNIT_INPUT_10A_2)));
