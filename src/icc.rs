@@ -25,6 +25,7 @@ pub struct IntCodeComputer {
     pub terminated: bool,
     pub relative_base: i64,
     pub output: String,
+    pub previous_operation: i64,
 }
 
 impl IntCodeComputer {
@@ -50,8 +51,8 @@ impl IntCodeComputer {
                 '2' => ParameterMode::Relative,
                 _ => unreachable!(),
             };
-            let operation = c.take(2).collect::<String>().parse::<i64>().unwrap();
-            match operation {
+            self.previous_operation = c.take(2).collect::<String>().parse::<i64>().unwrap();
+            match self.previous_operation {
                 1 => self.add(p0, p1, p2),
                 2 => self.mul(p0, p1, p2),
                 3 => self.store(p0),

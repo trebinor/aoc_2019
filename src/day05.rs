@@ -209,6 +209,7 @@ pub fn icc_5a(input: &str) -> String {
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
+        previous_operation: 0,
     };
     let mut output = "".to_string();
     while !icc.terminated {
@@ -236,6 +237,7 @@ pub fn icc_5b(input: &str) -> String {
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
+        previous_operation: 0,
     };
     icc.execute();
     icc.consume_output()

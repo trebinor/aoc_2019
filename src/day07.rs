@@ -26,6 +26,7 @@ pub fn original_7a(input: &str) -> i64 {
                 terminated: false,
                 relative_base: 0,
                 output: "".to_string(),
+                previous_operation: 0,
             };
             5
         ];
@@ -98,6 +99,7 @@ pub fn original_7b(input: &str) -> i64 {
                 terminated: false,
                 relative_base: 0,
                 output: "".to_string(),
+                previous_operation: 0,
             };
             5
         ];

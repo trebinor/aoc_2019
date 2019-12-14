@@ -72,6 +72,7 @@ fn paint_panels(v: &[i64], show_paint: bool, initial_color: PanelColor) -> u32 {
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
+        previous_operation: 0,
     };
     icc.program.resize(1024 * 1024, 0);
     panel[x][y].color = initial_color;

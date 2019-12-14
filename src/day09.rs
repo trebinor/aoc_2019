@@ -18,6 +18,7 @@ pub fn original_9a(input: &str) -> i64 {
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
+        previous_operation: 0,
     };
     icc.program.resize(1024 * 1024, 0);
     icc.execute();
@@ -42,6 +43,7 @@ pub fn original_9b(input: &str) -> i64 {
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
+        previous_operation: 0,
     };
     icc.program.resize(1024 * 1024, 0);
     icc.execute();
