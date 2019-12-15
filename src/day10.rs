@@ -14,6 +14,13 @@ impl PartialEq for Point {
     }
 }
 
+impl Point {
+    fn distance(&self, other: &Point) -> f64 {
+        ((other.x as f64 - self.x as f64).powf(2.0) + (other.y as f64 - self.y as f64).powf(2.0))
+            .sqrt()
+    }
+}
+
 trait PointAnalysis {
     fn find_best_point(&mut self, &[Point]) -> Point;
 }
@@ -76,6 +83,88 @@ pub fn visible_asteroids(asteroid_field: &[Point]) -> u32 {
         // None, so 0 asteroids
         0
     }
+}
+
+#[aoc(day10, part2)]
+pub fn math_on_200th_asteroid(asteroid_field: &[Point]) -> u32 {
+    let mut asteroid_sight_map = AsteroidSightMap::new();
+    let p = &asteroid_sight_map.find_best_point(asteroid_field); // answer from part 1
+    let mut theta: f64 = 3.0 * std::f64::consts::FRAC_PI_2;
+    let mut h: HashMap<u64, Vec<Point>> = HashMap::new(); // map of angles relative to our vantage point to list of other points.  The key is a bit representation of f64, since it can't be hashed.
+    let mut asteroids_the_game = asteroid_field.to_vec().clone();
+    let mut this_asteroid: Point = *p;
+    for a in &asteroids_the_game {
+        if a == p {
+            println!("Laser is at {:?}", p);
+            continue; // don't shoot yourself
+        }
+        let dx = a.x as f64 - p.x as f64;
+        let dy = a.y as f64 - p.y as f64;
+        let hash_angle = if dy.atan2(dx) < 0.0 {
+            dy.atan2(dx) + (std::f64::consts::PI * 2.0)
+        } else {
+            dy.atan2(dx)
+        };
+        //println!("Adding theta {} for {:?}", hash_angle, a);
+        h.entry(hash_angle.to_bits())
+            .and_modify(|e| e.push(*a))
+            .or_insert({
+                let mut v = Vec::new();
+                v.push(*a);
+                v
+            });
+    }
+    //println!("{:?}", h);
+    let mut closest_clockwise_angle = 0.0;
+    for i in 1..=200 {
+        // if there's an asteroid with this angle, destroy the one with the smallest Euclidean distance
+        let asteroids_on_this_angle = h.get(&theta.to_bits());
+        if asteroids_on_this_angle.is_some() {
+            println!(
+                "asteroids on angle {}: {:?}",
+                theta,
+                asteroids_on_this_angle.unwrap()
+            );
+            let min = asteroids_on_this_angle
+                .unwrap()
+                .iter()
+                .min_by(|x, y| x.distance(p).partial_cmp(&y.distance(p)).unwrap());
+            if min.is_some() {
+                this_asteroid = *min.unwrap();
+                //asteroids_the_game.remove_item(min.unwrap());
+                asteroids_the_game
+                    .iter_mut()
+                    .position(|item| item == min.unwrap())
+                    .map(|index| asteroids_the_game.remove(index)); // see https://github.com/rust-lang/rust/issues/40062#issuecomment-480060761
+                println!("Removing {:?}", min.unwrap());
+            } else {
+                panic!();
+            }
+        }
+        let angles: Vec<f64> = h.keys().map(|t| f64::from_bits(*t)).collect();
+
+        println!("i={}", i);
+        closest_clockwise_angle = 10.0; // larger than possible
+        let mut smallest_positive_angle = 10.0;
+        for a in angles {
+            //println!("Starting with angle {}", a);
+            if a > theta && a < closest_clockwise_angle {
+                //println!("New closest angle {}", a);
+                closest_clockwise_angle = a;
+            }
+            if a < smallest_positive_angle {
+                smallest_positive_angle = a;
+            }
+        }
+        //println!("Closest clockwise angle = {}", closest_clockwise_angle);
+
+        if closest_clockwise_angle == 10.0 {
+            theta = smallest_positive_angle;
+        } else {
+            theta = closest_clockwise_angle;
+        }
+    }
+    (this_asteroid.x as u32) * 100 + this_asteroid.y as u32
 }
 
 #[cfg(test)]
