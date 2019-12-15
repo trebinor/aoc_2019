@@ -27,132 +27,18 @@ impl PointAnalysis for AsteroidSightMap {
 
         // Apply algorithm to each asteroid and update sight map
         for source in asteroid_field {
-            'target: for target in asteroid_field {
-                // draw a ray
-
-                /*
-                let step = if dx.abs() >= dy.abs() {
-                    dx.abs()
-                } else {
-                    dy.abs()
-                };
-                dx /= step;
-                dy /= step;
-                let mut x = source.x as f32;
-                let mut y = source.y as f32;
-                let mut i = 1;
-                */
-                /*
-                while i as f32 <= step {
-
-                    //println!("{} < {}", i as f32, step);
-                    // put pixel at x,y.  if it intersects an asteroid other than target, continue
-                    let p = Point {
-                        x: x.round() as usize,
-                        y: y.round() as usize,
-                    };
-                    //println!("({},{}) and ({},{})", x, y, target.x, target.y);
-                    if asteroid_field.iter().any(|&a| a == p) {
-                        println!("Found point at {:?}", p);
-                        //println!("({},{}) and ({},{})", x, y, target.x, target.y);
-                        if x as usize == source.x && y as usize == source.y {
-                            x += dx;
-                            y += dy;
-                            i += 1;
-                            //println!("x={}, y={}, i={}, step={}", x, y, i, step);
-                            continue;
-                        } else if x as usize == target.x && y as usize == target.y {
-                            println!("Inserting found point at {:?} to source {:?}", p, source);
-                            self.entry(*source).and_modify(|e| {
-                                e.insert(*target);
-                            });
-                        } else {
-                            println!("Rejected point {:?}", p);
-                        }
-                        continue 'target;
-                    } else {
-                        x += dx;
-                        y += dy;
-                        i += 1;
-                        println!("  x={}, y={}, i={}, step={}", x, y, i, step);
-                    }
-                }
-                let p = Point {
-                    x: x.round() as usize,
-                    y: y.round() as usize,
-                };
-                */
+            for target in asteroid_field {
                 if source == target {
-                    println!("Skipping own asteroid");
                     continue;
                 }
                 let dx = target.x as i32 - source.x as i32;
                 let dy = target.y as i32 - source.y as i32;
-                let mid_x = dx.abs() / 2 + std::cmp::min(source.x as i32, target.x as i32);
-                let mid_y = dy.abs() / 2 + std::cmp::min(source.y as i32, target.y as i32);
-                let rem_x = dx % 2;
-                let rem_y = dy % 2;
-                let p = Point {
-                    x: mid_x as usize,
-                    y: mid_y as usize,
-                };
-                println!(
-                    "{:?} to {:?} with mid ({},{})",
-                    source, target, mid_x, mid_y
-                );
-                //if rem_x == 0 && rem_y == 0 {
-                if source.x == target.x {
-                    for yi in
-                        std::cmp::min(source.y, target.y) + 1..std::cmp::max(source.y, target.y)
-                    {
-                        if asteroid_field
-                            .iter()
-                            .any(|&a| a == Point { x: source.x, y: yi })
-                        {
-                            println!(
-                                "Rejecting due to blocking vertical asteroid ({},{})",
-                                source.x, yi
-                            );
-                            continue 'target;
-                        }
-                    }
-                } else if source.y == target.y {
-                    for xi in
-                        std::cmp::min(source.x, target.x) + 1..std::cmp::max(source.x, target.x)
-                    {
-                        if asteroid_field
-                            .iter()
-                            .any(|&a| a == Point { x: xi, y: source.y })
-                        {
-                            println!(
-                                "Rejecting due to blocking horizontal asteroid ({},{})",
-                                xi, source.y
-                            );
-                            continue 'target;
-                        }
-                    }
-                }
-                if !asteroid_field.iter().any(|&a| a == p) {
-                    println!(
-                        "Inserting found point at {:?} to source {:?}",
-                        target, source
-                    );
-                    self.entry(*source).and_modify(|e| {
-                        e.insert(*target);
-                    });
-                }
-                //}
+                self.entry(*source).and_modify(|e| {
+                    e.insert((dy as f64).atan2(dx as f64).to_bits());
+                });
             }
         }
 
-        // return point with largest count in hashset
-        /*
-        println!(
-            "(3,3) has {:?}, (5,8) has {:?}",
-            self.get(&Point { x: 4, y: 4 }).unwrap().len(),
-            self.get(&Point { x: 5, y: 8 }).unwrap().len()
-        );
-        */
         *self
             .keys()
             .max_by(|x, y| self.get(x).unwrap().len().cmp(&self.get(y).unwrap().len()))
@@ -160,8 +46,7 @@ impl PointAnalysis for AsteroidSightMap {
     }
 }
 
-//https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
-type AsteroidSightMap = HashMap<Point, HashSet<Point>>;
+type AsteroidSightMap = HashMap<Point, HashSet<u64>>;
 type AsteroidField = Vec<Point>;
 
 #[aoc_generator(day10)]
@@ -251,7 +136,7 @@ mod tests {
 .#.#.###########.###
 #.#.#.#####.####.###
 ###.##.####.##.#..##";
-    const ANSWER_10A: u32 = 0;
+    const ANSWER_10A: u32 = 263;
     const ANSWER_10B: u32 = 0;
     const UNIT_ANSWER_10A_1: Point = Point { x: 5, y: 8 };
     const UNIT_ANSWER_10A_2: Point = Point { x: 1, y: 2 };
