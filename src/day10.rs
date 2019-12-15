@@ -89,6 +89,11 @@ impl PointAnalysis for AsteroidSightMap {
         }
 
         // return point with largest count in hashset
+        println!(
+            "(4,4) has {:?}, (5,8) has {:?}",
+            self.get(&Point { x: 4, y: 4 }).unwrap().len(),
+            self.get(&Point { x: 5, y: 8 }).unwrap().len()
+        );
         *self
             .keys()
             .max_by(|x, y| self.get(x).unwrap().len().cmp(&self.get(y).unwrap().len()))
