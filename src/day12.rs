@@ -76,7 +76,7 @@ pub fn total_energy_all_planets(v: &[Position]) -> u64 {
         body.position = *position;
         bodies.push(body);
     }
-    for i in 1..=ITERATIONS {
+    for _i in 1..=ITERATIONS {
         //TODO: Is there a more rustic way to double-iterate over a vec?
         for a in 0..bodies.len() {
             for b in 0..bodies.len() {

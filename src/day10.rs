@@ -58,7 +58,7 @@ type AsteroidField = Vec<Point>;
 
 #[aoc_generator(day10)]
 pub fn generator(input: &str) -> AsteroidField {
-    let mut v = input.lines().map(|l| l.trim()).collect::<Vec<&str>>();
+    let v = input.lines().map(|l| l.trim()).collect::<Vec<&str>>();
     let mut asteroid_field: AsteroidField = AsteroidField::new();
     for (i, l) in v.iter().enumerate() {
         for (j, x) in l.chars().enumerate() {
@@ -75,7 +75,7 @@ pub fn generator(input: &str) -> AsteroidField {
 #[aoc(day10, part1)]
 pub fn visible_asteroids(asteroid_field: &[Point]) -> u32 {
     let mut asteroid_sight_map = AsteroidSightMap::new();
-    let mut best_point = &asteroid_sight_map.find_best_point(asteroid_field);
+    let best_point = &asteroid_sight_map.find_best_point(asteroid_field);
     if let Some(asteroids_visible_by_best_point) = &asteroid_sight_map.get(&best_point) {
         // how many asteroids for this point?
         asteroids_visible_by_best_point.len() as u32
@@ -114,8 +114,6 @@ pub fn math_on_200th_asteroid(asteroid_field: &[Point]) -> u32 {
                 v
             });
     }
-    //println!("{:?}", h);
-    let mut closest_clockwise_angle = 0.0;
     for i in 1..=200 {
         // if there's an asteroid with this angle, destroy the one with the smallest Euclidean distance
         let asteroids_on_this_angle = h.get(&theta.to_bits());
@@ -144,7 +142,7 @@ pub fn math_on_200th_asteroid(asteroid_field: &[Point]) -> u32 {
         let angles: Vec<f64> = h.keys().map(|t| f64::from_bits(*t)).collect();
 
         println!("i={}", i);
-        closest_clockwise_angle = 10.0; // larger than possible
+        let mut closest_clockwise_angle = 10.0; // larger than possible
         let mut smallest_positive_angle = 10.0;
         for a in angles {
             //println!("Starting with angle {}", a);

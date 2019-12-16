@@ -47,9 +47,9 @@ pub fn original_13a(input: &str) -> i64 {
         if icc.terminated {
             break;
         }
-        let x: i32 = icc.consume_output().parse().unwrap();
+        let _x: i32 = icc.consume_output().parse().unwrap();
         icc.execute();
-        let y: i32 = icc.consume_output().parse().unwrap();
+        let _y: i32 = icc.consume_output().parse().unwrap();
         icc.execute();
         let t: Tile = get_tile(icc.consume_output().parse().unwrap());
         if t == Tile::Block {
@@ -82,7 +82,6 @@ pub fn original_13b(input: &str) -> i64 {
     };
     icc.program.resize(1024 * 1024, 0);
     let mut score: i64 = 0;
-    let mut block_tiles: i32 = 0;
     let mut paddle_x: i32 = 0;
     let mut ball_x: i32 = 0;
     loop {
@@ -100,7 +99,7 @@ pub fn original_13b(input: &str) -> i64 {
             } else {
                 let t: Tile = get_tile(output);
                 if t == Tile::Block {
-                    block_tiles += 1;
+                    // draw tile block
                 } else if t == Tile::HorizontalPaddle {
                     paddle_x = x;
                 } else if t == Tile::Ball {

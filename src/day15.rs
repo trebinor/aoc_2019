@@ -105,13 +105,7 @@ fn print_grid_small(grid: &[[char; 41]; 41]) {
 }
 
 #[aoc(day15, part2)]
-pub fn original_15b(input: &str) -> u32 {
-    let v: Vec<i64> = input
-        .trim()
-        .split(',')
-        .map(|o| o.parse::<i64>().unwrap())
-        .collect();
-
+pub fn original_15b(_input: &str) -> u32 {
     // solved grid from part 1
     let mut grid: [[char; 41]; 41] = [
         [
