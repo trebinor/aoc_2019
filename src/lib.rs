@@ -5,6 +5,7 @@ extern crate aoc_runner_derive;
 
 extern crate itertools;
 extern crate num;
+extern crate rand;
 extern crate regex;
 
 pub mod day01;
@@ -20,6 +21,7 @@ pub mod day10;
 pub mod day11;
 pub mod day12;
 pub mod day13;
+pub mod day15;
 pub mod icc;
 
 aoc_lib! { year = 2019 }
