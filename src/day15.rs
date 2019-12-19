@@ -17,7 +17,8 @@ pub fn original_15a(input: &str) -> u32 {
     let mut grid = [[' '; GRID_X]; GRID_Y];
     let mut x;
     let mut y;
-    for i in 1..=1 {
+    // TODO: Implement proper, non-random, faster solution.
+    for i in 1..=100 {
         x = GRID_X / 2;
         y = GRID_Y / 2;
         grid[x][y] = 'X';
@@ -106,7 +107,7 @@ fn print_grid_small(grid: &[[char; 41]; 41]) {
 
 #[aoc(day15, part2)]
 pub fn original_15b(_input: &str) -> u32 {
-    // solved grid from part 1
+    // Solved grid from part 1 using a random walk and 1000 iterations. Does not always fully solve the maze, of course.
     let mut grid: [[char; 41]; 41] = [
         [
             ' ', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', ' ', '#', '#', '#', '#',
@@ -391,7 +392,7 @@ mod tests {
     const ANSWER_15B: u32 = 340;
 
     #[test]
-    fn original() {
+    fn solutions() {
         assert_eq!(
             ANSWER_15A,
             original_15a(&fs::read_to_string("input/2019/day15.txt").unwrap().trim())

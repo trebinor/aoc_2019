@@ -95,7 +95,6 @@ pub fn math_on_200th_asteroid(asteroid_field: &[Point]) -> u32 {
     let mut this_asteroid: Point = *p;
     for a in &asteroids_the_game {
         if a == p {
-            println!("Laser is at {:?}", p);
             continue; // don't shoot yourself
         }
         let dx = a.x as f64 - p.x as f64;
@@ -105,7 +104,6 @@ pub fn math_on_200th_asteroid(asteroid_field: &[Point]) -> u32 {
         } else {
             dy.atan2(dx)
         };
-        //println!("Adding theta {} for {:?}", hash_angle, a);
         h.entry(hash_angle.to_bits())
             .and_modify(|e| e.push(*a))
             .or_insert({
@@ -114,47 +112,36 @@ pub fn math_on_200th_asteroid(asteroid_field: &[Point]) -> u32 {
                 v
             });
     }
-    for i in 1..=200 {
+    for _i in 1..=200 {
         // if there's an asteroid with this angle, destroy the one with the smallest Euclidean distance
         let asteroids_on_this_angle = h.get(&theta.to_bits());
         if asteroids_on_this_angle.is_some() {
-            println!(
-                "asteroids on angle {}: {:?}",
-                theta,
-                asteroids_on_this_angle.unwrap()
-            );
             let min = asteroids_on_this_angle
                 .unwrap()
                 .iter()
                 .min_by(|x, y| x.distance(p).partial_cmp(&y.distance(p)).unwrap());
             if min.is_some() {
                 this_asteroid = *min.unwrap();
-                //asteroids_the_game.remove_item(min.unwrap());
                 asteroids_the_game
                     .iter_mut()
                     .position(|item| item == min.unwrap())
                     .map(|index| asteroids_the_game.remove(index)); // see https://github.com/rust-lang/rust/issues/40062#issuecomment-480060761
-                println!("Removing {:?}", min.unwrap());
             } else {
                 panic!();
             }
         }
         let angles: Vec<f64> = h.keys().map(|t| f64::from_bits(*t)).collect();
 
-        println!("i={}", i);
         let mut closest_clockwise_angle = 10.0; // larger than possible
         let mut smallest_positive_angle = 10.0;
         for a in angles {
-            //println!("Starting with angle {}", a);
             if a > theta && a < closest_clockwise_angle {
-                //println!("New closest angle {}", a);
                 closest_clockwise_angle = a;
             }
             if a < smallest_positive_angle {
                 smallest_positive_angle = a;
             }
         }
-        //println!("Closest clockwise angle = {}", closest_clockwise_angle);
 
         if closest_clockwise_angle == 10.0 {
             theta = smallest_positive_angle;
@@ -168,6 +155,7 @@ pub fn math_on_200th_asteroid(asteroid_field: &[Point]) -> u32 {
 #[cfg(test)]
 mod tests {
     use day10::generator;
+    use day10::math_on_200th_asteroid;
     use day10::visible_asteroids;
     use day10::AsteroidSightMap;
     use day10::Point;
@@ -224,14 +212,14 @@ mod tests {
 #.#.#.#####.####.###
 ###.##.####.##.#..##";
     const ANSWER_10A: u32 = 263;
-    const ANSWER_10B: u32 = 0;
+    const ANSWER_10B: u32 = 1110;
     const UNIT_ANSWER_10A_1: Point = Point { x: 5, y: 8 };
     const UNIT_ANSWER_10A_2: Point = Point { x: 1, y: 2 };
     const UNIT_ANSWER_10A_3: Point = Point { x: 6, y: 3 };
     const UNIT_ANSWER_10A_4: Point = Point { x: 11, y: 13 };
 
     #[test]
-    fn original_10a() {
+    fn answer_10_a_b() {
         assert_eq!(
             ANSWER_10A,
             visible_asteroids(&generator(
@@ -240,7 +228,7 @@ mod tests {
         );
         assert_eq!(
             ANSWER_10B,
-            visible_asteroids(&generator(
+            math_on_200th_asteroid(&generator(
                 &fs::read_to_string("input/2019/day10.txt").unwrap().trim()
             ))
         );
