@@ -3,6 +3,7 @@ extern crate aoc_runner;
 #[macro_use]
 extern crate aoc_runner_derive;
 
+extern crate chrono;
 extern crate itertools;
 extern crate num;
 extern crate rand;
