@@ -7,6 +7,11 @@ pub struct Recipe {
     product: (String, u64),
 }
 
+/*
+ * This queueing approach was inspired by a gist from u/aurele.
+ * My previous approach was an attempt at recursion and failed due
+ * to the borrow checker and my horrible stucture.
+ */
 fn ore_per_fuel(recipes: &[Recipe], fuel: u64) -> u64 {
     let mut required_materials: Vec<(String, u64)> = Vec::new();
     let mut created_materials: HashMap<String, u64> = HashMap::new();
@@ -92,6 +97,7 @@ pub fn solution_14a(recipes: &[Recipe]) -> u64 {
 
 #[aoc(day14, part2)]
 pub fn solution_14b(recipes: &[Recipe]) -> u64 {
+    // Iteration was too slow, so a bsearch was obvious
     let mut low: u64 = 0;
     let mut high: u64 = 4_000_000_000;
     let mut mid: u64 = 0;
@@ -112,6 +118,7 @@ pub fn solution_14b(recipes: &[Recipe]) -> u64 {
 
 #[cfg(test)]
 mod tests {
+    use day14::generate_recipes;
     use day14::solution_14a;
     use day14::solution_14b;
     use std::fs;
@@ -122,11 +129,15 @@ mod tests {
     fn solutions() {
         assert_eq!(
             ANSWER_14A,
-            solution_14a(&fs::read_to_string("input/1419/day14.txt").unwrap().trim())
+            solution_14a(&generate_recipes(
+                &fs::read_to_string("input/2019/day14.txt").unwrap().trim()
+            ))
         );
         assert_eq!(
             ANSWER_14B,
-            solution_14b(&fs::read_to_string("input/1419/day14.txt").unwrap().trim())
+            solution_14b(&generate_recipes(
+                &fs::read_to_string("input/2019/day14.txt").unwrap().trim()
+            ))
         );
     }
 }
