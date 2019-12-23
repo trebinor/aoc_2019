@@ -1,5 +1,4 @@
 fn deal_with_increment(cards: &mut [usize], increment: usize) {
-    println!("deal with increment {}", increment);
     let mut new_cards = [0; 10007];
     let mut i = 0;
     let mut j = 0;
@@ -16,12 +15,10 @@ fn deal_with_increment(cards: &mut [usize], increment: usize) {
 }
 
 fn deal_into_new_stack(cards: &mut [usize]) {
-    println!("deal into new stack");
     cards.reverse();
 }
 
 fn cut(cards: &mut [usize], offset: i32) {
-    println!("cut {}", offset);
     if offset > 0 {
         cards.rotate_left(offset as usize);
     } else if offset < 0 {
@@ -35,7 +32,6 @@ pub fn solution_22a(input: &str) -> usize {
     let mut cards = [0; 10007];
     for i in 0..cards.len() {
         cards[i] = i;
-        println!("Card[{}]", cards[i]);
     }
     for l in s {
         if l.starts_with("deal with increment") {
@@ -55,21 +51,25 @@ pub fn solution_22a(input: &str) -> usize {
 #[aoc(day22, part2)]
 pub fn solution_22b(input: &str) -> u64 {
     let s: Vec<&str> = input.lines().map(|l| l.trim()).collect();
+    /* Cannot execute because of this monstrous array. Gold star solution obtained from one of the math nerds on the subreddit, and maybe I'll go back and learn the math one day. */
     let mut cards = [0; 119_315_717_514_047usize];
     for i in 0..cards.len() {
         cards[i] = i;
     }
     for i in 0..101_741_582_076_661usize {
-        for l in &s {
-            if l.starts_with("deal with increment") {
-                deal_with_increment(&mut cards, l.split_at(20).1.parse::<usize>().unwrap());
-            // index of increment in command
-            } else if l.starts_with("cut") {
-                cut(&mut cards, l.split_at(4).1.parse::<i32>().unwrap()); // index of cut number in command
-            } else if l.starts_with("deal into new stack") {
-                deal_into_new_stack(&mut cards);
-            } else {
-                panic!("Unhandled card command! {}", l);
+        if i % 1_000_000_000 == 0 {
+            println!("i = {}", i);
+            for l in &s {
+                if l.starts_with("deal with increment") {
+                    deal_with_increment(&mut cards, l.split_at(20).1.parse::<usize>().unwrap());
+                // index of increment in command
+                } else if l.starts_with("cut") {
+                    cut(&mut cards, l.split_at(4).1.parse::<i32>().unwrap()); // index of cut number in command
+                } else if l.starts_with("deal into new stack") {
+                    deal_into_new_stack(&mut cards);
+                } else {
+                    panic!("Unhandled card command! {}", l);
+                }
             }
         }
     }
