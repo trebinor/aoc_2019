@@ -30,51 +30,56 @@ pub struct IntCodeComputer {
 
 impl IntCodeComputer {
     pub fn execute(&mut self) {
-        'outer: loop {
-            let s = format!("{:0>5}", self.program[self.pc].to_string());
-            let mut c = s.chars();
-            let p2 = match c.next().unwrap() {
-                '0' => ParameterMode::Position,
-                '1' => ParameterMode::Immediate,
-                '2' => ParameterMode::Relative,
-                _ => unreachable!(),
-            };
-            let p1 = match c.next().unwrap() {
-                '0' => ParameterMode::Position,
-                '1' => ParameterMode::Immediate,
-                '2' => ParameterMode::Relative,
-                _ => unreachable!(),
-            };
-            let p0 = match c.next().unwrap() {
-                '0' => ParameterMode::Position,
-                '1' => ParameterMode::Immediate,
-                '2' => ParameterMode::Relative,
-                _ => unreachable!(),
-            };
-            self.previous_operation = c.take(2).collect::<String>().parse::<i64>().unwrap();
-            //println!("Operation: {:?}", self.previous_operation);
-            match self.previous_operation {
-                1 => self.add(p0, p1, p2),
-                2 => self.mul(p0, p1, p2),
-                3 => self.store(p0),
-                4 => {
-                    //self.output = self.show(p0).parse::<i64>().unwrap();
-                    self.produce_output(p0);
-                    if self.break_on_output {
-                        break 'outer;
-                    }
-                }
-                5 => self.conditional(p0, p1, p2, Operation::JumpIfTrue),
-                6 => self.conditional(p0, p1, p2, Operation::JumpIfFalse),
-                7 => self.conditional(p0, p1, p2, Operation::LessThan),
-                8 => self.conditional(p0, p1, p2, Operation::Equals),
-                9 => self.relative_base(p0),
-                99 => {
-                    self.terminated = true;
-                    break 'outer;
-                }
-                _ => panic!(),
+        loop {
+            self.execute_one();
+            if self.previous_operation == 99
+                || (self.previous_operation == 4 && self.break_on_output)
+            {
+                break;
             }
+        }
+    }
+
+    pub fn execute_one(&mut self) {
+        let s = format!("{:0>5}", self.program[self.pc].to_string());
+        let mut c = s.chars();
+        let p2 = match c.next().unwrap() {
+            '0' => ParameterMode::Position,
+            '1' => ParameterMode::Immediate,
+            '2' => ParameterMode::Relative,
+            _ => unreachable!(),
+        };
+        let p1 = match c.next().unwrap() {
+            '0' => ParameterMode::Position,
+            '1' => ParameterMode::Immediate,
+            '2' => ParameterMode::Relative,
+            _ => unreachable!(),
+        };
+        let p0 = match c.next().unwrap() {
+            '0' => ParameterMode::Position,
+            '1' => ParameterMode::Immediate,
+            '2' => ParameterMode::Relative,
+            _ => unreachable!(),
+        };
+        self.previous_operation = c.take(2).collect::<String>().parse::<i64>().unwrap();
+        //println!("Operation: {:?}", self.previous_operation);
+        match self.previous_operation {
+            1 => self.add(p0, p1, p2),
+            2 => self.mul(p0, p1, p2),
+            3 => self.store(p0),
+            4 => {
+                //self.output = self.show(p0).parse::<i64>().unwrap();
+                self.produce_output(p0);
+            }
+            5 => self.conditional(p0, p1, p2, Operation::JumpIfTrue),
+            6 => self.conditional(p0, p1, p2, Operation::JumpIfFalse),
+            7 => self.conditional(p0, p1, p2, Operation::LessThan),
+            8 => self.conditional(p0, p1, p2, Operation::Equals),
+            9 => self.relative_base(p0),
+            99 => {
+                self.terminated = true;
+            }
+            _ => panic!(),
         }
     }
 
@@ -144,6 +149,7 @@ impl IntCodeComputer {
             ParameterMode::Relative => self.relative_address(1),
             _ => unreachable!(),
         };
+        // TODO: Remove this state from icc
         if self.use_amp_input {
             if self.input_read {
                 self.program[output_addr as usize] = self.amp_input;
