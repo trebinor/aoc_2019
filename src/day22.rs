@@ -52,7 +52,8 @@ pub fn solution_22a(input: &str) -> usize {
 pub fn solution_22b(input: &str) -> u64 {
     let s: Vec<&str> = input.lines().map(|l| l.trim()).collect();
     /* Cannot execute because of this monstrous array. Gold star solution obtained from one of the math nerds on the subreddit, and maybe I'll go back and learn the math one day. */
-    let mut cards = [0; 119_315_717_514_047usize];
+    //let mut cards = [0; 119_315_717_514_047usize];
+    let mut cards = [0; 10007usize];
     for i in 0..cards.len() {
         cards[i] = i;
     }

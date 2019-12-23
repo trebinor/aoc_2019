@@ -1,4 +1,5 @@
 use icc::IntCodeComputer;
+use std::collections::VecDeque;
 
 #[aoc(day09, part1, original)]
 pub fn original_9a(input: &str) -> i64 {
@@ -14,11 +15,13 @@ pub fn original_9a(input: &str) -> i64 {
         amp_input: 0,
         use_amp_input: false,
         input_read: false,
+        break_on_input: false,
         break_on_output: false,
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
         previous_operation: 0,
+        inputq: VecDeque::new(),
     };
     icc.program.resize(1024 * 1024, 0);
     icc.execute();
@@ -39,11 +42,13 @@ pub fn original_9b(input: &str) -> i64 {
         amp_input: 0,
         use_amp_input: false,
         input_read: false,
+        break_on_input: false,
         break_on_output: false,
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
         previous_operation: 0,
+        inputq: VecDeque::new(),
     };
     icc.program.resize(1024 * 1024, 0);
     icc.execute();

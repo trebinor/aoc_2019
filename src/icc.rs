@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 #[derive(Debug)]
 enum ParameterMode {
     Position,
@@ -21,16 +23,29 @@ pub struct IntCodeComputer {
     pub amp_input: i64,
     pub use_amp_input: bool,
     pub input_read: bool,
+    pub break_on_input: bool,
     pub break_on_output: bool,
     pub terminated: bool,
     pub relative_base: i64,
     pub output: String,
     pub previous_operation: i64,
+    pub inputq: VecDeque<i64>,
 }
 
 impl IntCodeComputer {
     pub fn execute(&mut self) {
         loop {
+            self.execute_one();
+            if self.previous_operation == 99
+                || (self.previous_operation == 4 && self.break_on_output)
+            {
+                break;
+            }
+        }
+    }
+
+    pub fn execute_n_breaking(&mut self, n: usize) {
+        for _i in 0..n {
             self.execute_one();
             if self.previous_operation == 99
                 || (self.previous_operation == 4 && self.break_on_output)
@@ -62,15 +77,11 @@ impl IntCodeComputer {
             _ => unreachable!(),
         };
         self.previous_operation = c.take(2).collect::<String>().parse::<i64>().unwrap();
-        //println!("Operation: {:?}", self.previous_operation);
         match self.previous_operation {
             1 => self.add(p0, p1, p2),
             2 => self.mul(p0, p1, p2),
             3 => self.store(p0),
-            4 => {
-                //self.output = self.show(p0).parse::<i64>().unwrap();
-                self.produce_output(p0);
-            }
+            4 => self.produce_output(p0),
             5 => self.conditional(p0, p1, p2, Operation::JumpIfTrue),
             6 => self.conditional(p0, p1, p2, Operation::JumpIfFalse),
             7 => self.conditional(p0, p1, p2, Operation::LessThan),
@@ -78,6 +89,7 @@ impl IntCodeComputer {
             9 => self.relative_base(p0),
             99 => {
                 self.terminated = true;
+                println!("Terminated!")
             }
             _ => panic!(),
         }
@@ -158,7 +170,12 @@ impl IntCodeComputer {
                 self.program[output_addr as usize] = self.input;
             }
         } else {
-            self.program[output_addr as usize] = self.input;
+            //self.program[output_addr as usize] = self.input;
+            if !self.inputq.is_empty() {
+                self.program[output_addr as usize] = self.inputq.pop_front().unwrap();
+            } else {
+                self.program[output_addr as usize] = -1;
+            }
         }
         self.pc += 2;
     }
@@ -170,6 +187,7 @@ impl IntCodeComputer {
             ParameterMode::Relative => self.relative(1),
         };
         self.pc += 2;
+        //println!("Output {}", s0.to_string());
         self.output.push_str(&s0.to_string());
     }
 

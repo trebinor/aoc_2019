@@ -1,4 +1,5 @@
 use icc::IntCodeComputer;
+use std::collections::VecDeque;
 use rand::prelude::*;
 
 const GRID_X: usize = 100;
@@ -31,11 +32,13 @@ pub fn original_15a(input: &str) -> u32 {
             amp_input: 0,
             use_amp_input: false,
             input_read: false,
+            break_on_input: false,
             break_on_output: true,
             terminated: false,
             relative_base: 0,
             output: "".to_string(),
             previous_operation: 0,
+            inputq: VecDeque::new(),
         };
         icc.program.resize(1024 * 1024, 0);
         loop {

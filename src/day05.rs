@@ -1,4 +1,5 @@
 use icc::IntCodeComputer;
+use std::collections::VecDeque;
 
 #[aoc(day05, part1, original)]
 pub fn original_5a(input: &str) -> String {
@@ -205,11 +206,13 @@ pub fn icc_5a(input: &str) -> String {
         amp_input: 0,
         use_amp_input: false,
         input_read: false,
+        break_on_input: false,
         break_on_output: false,
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
         previous_operation: 0,
+        inputq: VecDeque::new(),
     };
     let mut output = "".to_string();
     while !icc.terminated {
@@ -233,11 +236,13 @@ pub fn icc_5b(input: &str) -> String {
         amp_input: 0,
         use_amp_input: false,
         input_read: false,
+        break_on_input: false,
         break_on_output: false,
         terminated: false,
         relative_base: 0,
         output: "".to_string(),
         previous_operation: 0,
+        inputq: VecDeque::new(),
     };
     icc.execute();
     icc.consume_output()

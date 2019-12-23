@@ -1,5 +1,6 @@
 use icc::IntCodeComputer;
 use regex::Regex;
+use std::collections::VecDeque;
 
 #[aoc(day07, part1, original)]
 pub fn original_7a(input: &str) -> i64 {
@@ -22,11 +23,13 @@ pub fn original_7a(input: &str) -> i64 {
                 amp_input: 0,
                 use_amp_input: true,
                 input_read: false,
+                break_on_input: false,
                 break_on_output: false,
                 terminated: false,
                 relative_base: 0,
                 output: "".to_string(),
                 previous_operation: 0,
+                inputq: VecDeque::new(),
             };
             5
         ];
@@ -95,11 +98,13 @@ pub fn original_7b(input: &str) -> i64 {
                 amp_input: 0,
                 use_amp_input: true,
                 input_read: false,
+                break_on_input: false,
                 break_on_output: true,
                 terminated: false,
                 relative_base: 0,
                 output: "".to_string(),
                 previous_operation: 0,
+                inputq: VecDeque::new(),
             };
             5
         ];
