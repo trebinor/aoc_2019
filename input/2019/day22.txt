@@ -1,1 +1,100 @@
-59766977873078199970107568349014384917072096886862753001181795467415574411535593439580118271423936468093569795214812464528265609129756216554981001419093454383882560114421882354033176205096303121974045739484366182044891267778931831792562035297585485658843180220796069147506364472390622739583789825303426921751073753670825259141712329027078263584903642919122991531729298497467435911779410970734568708255590755424253797639255236759229935298472380039602200033415155467240682533288468148414065641667678718893872482168857631352275667414965503393341925955626006552556064728352731985387163635634298416016700583512112158756656289482437803808487304460165855189
+deal with increment 61
+cut 7724
+deal into new stack
+cut -7151
+deal with increment 22
+deal into new stack
+deal with increment 11
+cut -2506
+deal with increment 14
+cut 9670
+deal with increment 59
+cut 3341
+deal into new stack
+cut 9816
+deal with increment 3
+cut -7547
+deal with increment 31
+cut 7178
+deal into new stack
+deal with increment 52
+deal into new stack
+deal with increment 70
+cut 3702
+deal with increment 62
+cut -6554
+deal with increment 68
+cut 1356
+deal with increment 58
+cut -9486
+deal with increment 5
+cut 3969
+deal into new stack
+deal with increment 9
+cut 1376
+deal with increment 70
+cut 4921
+deal with increment 38
+deal into new stack
+cut -4708
+deal with increment 56
+deal into new stack
+cut 6672
+deal with increment 53
+cut -6567
+deal with increment 28
+cut -6494
+deal with increment 57
+deal into new stack
+cut 3002
+deal with increment 53
+cut 5450
+deal with increment 5
+cut 7672
+deal with increment 63
+cut -9864
+deal with increment 66
+cut 5734
+deal with increment 23
+cut 9172
+deal with increment 8
+cut 3219
+deal with increment 49
+cut -975
+deal with increment 52
+deal into new stack
+deal with increment 10
+cut 6050
+deal with increment 68
+deal into new stack
+cut -3778
+deal with increment 25
+cut 9259
+deal with increment 41
+cut -268
+deal with increment 44
+deal into new stack
+cut -1431
+deal with increment 48
+cut -1885
+deal with increment 75
+cut 8570
+deal with increment 49
+deal into new stack
+deal with increment 62
+deal into new stack
+deal with increment 35
+deal into new stack
+deal with increment 30
+cut -3800
+deal with increment 4
+deal into new stack
+deal with increment 27
+cut 2827
+deal with increment 2
+cut -2346
+deal with increment 19
+cut 6615
+deal with increment 38
+cut 2739
+deal into new stack
