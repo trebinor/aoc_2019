@@ -1,5 +1,4 @@
 use icc::IntCodeComputer;
-use std::collections::VecDeque;
 
 #[aoc(day09, part1, original)]
 pub fn original_9a(input: &str) -> i64 {
@@ -8,21 +7,7 @@ pub fn original_9a(input: &str) -> i64 {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut icc = IntCodeComputer {
-        program: v.clone(),
-        pc: 0,
-        input: 1,
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: false,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v, false);
     icc.program.resize(1024 * 1024, 0);
     icc.execute();
     icc.consume_output().parse().unwrap()
@@ -35,21 +20,7 @@ pub fn original_9b(input: &str) -> i64 {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut icc = IntCodeComputer {
-        program: v.clone(),
-        pc: 0,
-        input: 2,
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: false,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v, false);
     icc.program.resize(1024 * 1024, 0);
     icc.execute();
     icc.consume_output().parse().unwrap()
@@ -60,7 +31,7 @@ mod tests {
     use day09::original_9a;
     use day09::original_9b;
     use std::fs;
-    const ANSWER_9A: i64 = 2932210790;
+    const ANSWER_9A: i64 = 2_932_210_790;
     const ANSWER_9B: i64 = 73144;
 
     #[test]

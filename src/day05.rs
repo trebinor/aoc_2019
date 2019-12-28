@@ -1,5 +1,4 @@
 use icc::IntCodeComputer;
-use std::collections::VecDeque;
 
 #[aoc(day05, part1, original)]
 pub fn original_5a(input: &str) -> String {
@@ -199,21 +198,8 @@ pub fn icc_5a(input: &str) -> String {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut icc = IntCodeComputer {
-        program: v,
-        pc: 0,
-        input: 1,
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: false,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v, false);
+    icc.inputq.push_back(1);
     let mut output = "".to_string();
     while !icc.terminated {
         icc.execute();
@@ -229,21 +215,8 @@ pub fn icc_5b(input: &str) -> String {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut icc = IntCodeComputer {
-        program: v,
-        pc: 0,
-        input: 5,
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: false,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v, false);
+    icc.inputq.push_back(5);
     icc.execute();
     icc.consume_output()
 }

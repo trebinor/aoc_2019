@@ -8,21 +8,7 @@ pub fn solution_17a(input: &str) -> u32 {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut icc = IntCodeComputer {
-        program: v.clone(),
-        pc: 0,
-        input: 0,
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: false,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v, false);
     icc.program.resize(1024 * 1024, 0);
     icc.execute();
     let output = icc.consume_output();
@@ -79,21 +65,7 @@ pub fn solution_17b(input: &str) -> i64 {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut icc = IntCodeComputer {
-        program: v.clone(),
-        pc: 0,
-        input: 0,
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: false,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v, false);
     // Solved by hand, because why not?
     /*
     ........................#########..............
@@ -183,7 +155,7 @@ pub fn solution_17b(input: &str) -> i64 {
     icc.program[0] = 2;
     'outer: loop {
         if !icc_input.is_empty() {
-            icc.input = icc_input.pop_front().unwrap() as i64;
+            icc.inputq.push_back(icc_input.pop_front().unwrap() as i64);
         }
         loop {
             icc.execute_one();

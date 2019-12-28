@@ -1,5 +1,4 @@
 use icc::IntCodeComputer;
-use std::collections::VecDeque;
 const GRID_X: usize = 30000;
 const GRID_Y: usize = 30000;
 
@@ -62,29 +61,16 @@ fn paint_panels(v: &[i64], show_paint: bool, initial_color: PanelColor) -> u32 {
         GRID_Y
     ];
     let (mut x, mut y) = (GRID_X / 2, GRID_Y / 2);
-    let mut icc = IntCodeComputer {
-        program: v.to_vec().clone(),
-        pc: 0,
-        input: 0,
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: true,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v.to_vec(), true);
     icc.program.resize(1024 * 1024, 0);
     panel[x][y].color = initial_color;
     loop {
-        icc.input = if panel[x][y].color == PanelColor::Black {
-            0
-        } else {
-            1
-        };
+        icc.inputq
+            .push_back(if panel[x][y].color == PanelColor::Black {
+                0
+            } else {
+                1
+            });
         icc.execute();
         if icc.terminated {
             break;

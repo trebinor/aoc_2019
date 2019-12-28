@@ -1,5 +1,4 @@
 use icc::IntCodeComputer;
-use std::collections::VecDeque;
 use rand::prelude::*;
 
 const GRID_X: usize = 100;
@@ -25,28 +24,14 @@ pub fn original_15a(input: &str) -> u32 {
         grid[x][y] = 'X';
         println!("Sim {}", i);
         let mut steps: u32 = 0;
-        let mut icc = IntCodeComputer {
-            program: v.clone(),
-            pc: 0,
-            input: 0,
-            amp_input: 0,
-            use_amp_input: false,
-            input_read: false,
-            break_on_input: false,
-            break_on_output: true,
-            terminated: false,
-            relative_base: 0,
-            output: "".to_string(),
-            previous_operation: 0,
-            inputq: VecDeque::new(),
-        };
+        let mut icc = IntCodeComputer::new(v.clone(), true); 
         icc.program.resize(1024 * 1024, 0);
         loop {
-            icc.input = rng.gen_range(1, 5); //NSWE
+            icc.inputq.push_back(rng.gen_range(1, 5)); //NSWE
             icc.execute();
             match icc.consume_output().parse().unwrap() {
                 0 => {
-                    match icc.input {
+                    match icc.inputq.back().unwrap() {
                         1 => grid[x][y + 1] = '#',
                         2 => grid[x][y - 1] = '#',
                         3 => grid[x - 1][y] = '#',
@@ -57,7 +42,7 @@ pub fn original_15a(input: &str) -> u32 {
                 }
                 1 => {
                     grid[x][y] = if grid[x][y] == 'X' { 'X' } else { '.' };
-                    match icc.input {
+                    match icc.inputq.back().unwrap() {
                         1 => y += 1,
                         2 => y -= 1,
                         3 => x -= 1,
@@ -70,7 +55,7 @@ pub fn original_15a(input: &str) -> u32 {
                 }
                 2 => {
                     grid[x][y] = if grid[x][y] == 'X' { 'X' } else { '.' };
-                    match icc.input {
+                    match icc.inputq.back().unwrap() {
                         1 => y += 1,
                         2 => y -= 1,
                         3 => x -= 1,

@@ -1,5 +1,4 @@
 use icc::IntCodeComputer;
-use std::collections::VecDeque;
 
 #[derive(PartialEq, Debug)]
 enum Tile {
@@ -28,21 +27,7 @@ pub fn original_13a(input: &str) -> i64 {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut icc = IntCodeComputer {
-        program: v.clone(),
-        pc: 0,
-        input: 0,
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: true,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v, true);
     icc.program.resize(1024 * 1024, 0);
     let mut block_tiles: i64 = 0;
     loop {
@@ -70,21 +55,7 @@ pub fn original_13b(input: &str) -> i64 {
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
     v[0] = 2; // 2 quarters
-    let mut icc = IntCodeComputer {
-        program: v.clone(),
-        pc: 0,
-        input: 0, // neutral joystick by default
-        amp_input: 0,
-        use_amp_input: false,
-        input_read: false,
-        break_on_input: false,
-        break_on_output: true,
-        terminated: false,
-        relative_base: 0,
-        output: "".to_string(),
-        previous_operation: 0,
-        inputq: VecDeque::new(),
-    };
+    let mut icc = IntCodeComputer::new(v, true);
     icc.program.resize(1024 * 1024, 0);
     let mut score: i64 = 0;
     let mut paddle_x: i32 = 0;
@@ -112,13 +83,13 @@ pub fn original_13b(input: &str) -> i64 {
                 }
             }
         }
-        icc.input = if ball_x < paddle_x {
+        icc.inputq.push_back(if ball_x < paddle_x {
             -1
         } else if ball_x > paddle_x {
             1
         } else {
             0
-        };
+        });
     }
     score
 }

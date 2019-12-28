@@ -1,6 +1,5 @@
 use icc::IntCodeComputer;
 use regex::Regex;
-use std::collections::VecDeque;
 
 #[aoc(day07, part1, original)]
 pub fn original_7a(input: &str) -> i64 {
@@ -16,26 +15,12 @@ pub fn original_7a(input: &str) -> i64 {
     let mut max_output: i64 = std::i64::MIN;
     for p in phases {
         let mut amps: Vec<IntCodeComputer> = vec![
-            IntCodeComputer {
-                program: v.clone(),
-                pc: 0,
-                input: 0,
-                amp_input: 0,
-                use_amp_input: true,
-                input_read: false,
-                break_on_input: false,
-                break_on_output: false,
-                terminated: false,
-                relative_base: 0,
-                output: "".to_string(),
-                previous_operation: 0,
-                inputq: VecDeque::new(),
-            };
+            IntCodeComputer::new(v.clone(), false);
             5
         ];
         let d = p.chars().flat_map(|c| c.to_digit(10)).collect::<Vec<u32>>();
         for i in 0..=4 {
-            amps[i].input = d[i] as i64;
+            amps[i].inputq.push_back(d[i] as i64);
             amps[i].execute();
             let output = amps[i].consume_output().parse::<i64>().unwrap();
             if i < 4 {
@@ -91,27 +76,13 @@ pub fn original_7b(input: &str) -> i64 {
     let mut max_output: i64 = std::i64::MIN;
     for p in phases {
         let mut amps: Vec<IntCodeComputer> = vec![
-            IntCodeComputer {
-                program: v.clone(),
-                pc: 0,
-                input: 0,
-                amp_input: 0,
-                use_amp_input: true,
-                input_read: false,
-                break_on_input: false,
-                break_on_output: true,
-                terminated: false,
-                relative_base: 0,
-                output: "".to_string(),
-                previous_operation: 0,
-                inputq: VecDeque::new(),
-            };
+            IntCodeComputer::new(v.clone(), true);
             5
         ];
         'this_phase: loop {
             let d = p.chars().flat_map(|c| c.to_digit(10)).collect::<Vec<u32>>();
             for i in 0..=4 {
-                amps[i].input = d[i] as i64;
+                amps[i].inputq.push_back(d[i] as i64);
                 amps[i].execute();
                 if i < 4 {
                     if amps[i].terminated {
@@ -142,8 +113,8 @@ mod tests {
     use day07::original_7a;
     use day07::original_7b;
     use std::fs;
-    const ANSWER_7A: i64 = 437860;
-    const ANSWER_7B: i64 = 49810599;
+    const ANSWER_7A: i64 = 437_860;
+    const ANSWER_7B: i64 = 49_810_599;
 
     #[test]
     fn original() {

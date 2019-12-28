@@ -8,73 +8,38 @@ pub fn solution_23a(input: &str) -> i64 {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut comps: Vec<IntCodeComputer> = vec![
-        IntCodeComputer {
-            program: v.clone(),
-            pc: 0,
-            input: 0,
-            amp_input: 0,
-            use_amp_input: false,
-            input_read: false,
-            break_on_input: false,
-            break_on_output: true,
-            terminated: false,
-            relative_base: 0,
-            output: "".to_string(),
-            previous_operation: 0,
-            inputq: VecDeque::new(),
-        };
-        50
-    ];
-    let mut inputq: Vec<VecDeque<i64>> = vec![VecDeque::new(); 50];
+    let mut comps: Vec<IntCodeComputer> = vec![IntCodeComputer::new(v, true); 50];
     let mut outputq: Vec<VecDeque<i64>> = vec![VecDeque::new(); 50];
     for (i, c) in comps.iter_mut().enumerate() {
         c.program.resize(1024 * 1024, 0);
-        c.input = i as i64;
+        c.inputq.push_back(i as i64);
         c.execute_one();
-        c.input = -1;
+        c.inputq.push_back(-1);
         assert_eq!(c.previous_operation, 3);
     }
 
-    let mut y_value_to_addr_255 = None;
-    'outer: loop {
-        for (i, c) in comps.iter_mut().enumerate() {
-            c.execute_one();
-            if c.previous_operation == 4 {
-                outputq[i].push_back(c.consume_output().parse::<i64>().unwrap());
+    let y_value_to_addr_255 = 'outer: loop {
+        for i in 0..comps.len() {
+            comps[i].execute_one();
+            if comps[i].previous_operation == 4 {
+                outputq[i].push_back(comps[i].consume_output().parse::<i64>().unwrap());
 
                 if outputq[i].len() >= 3 {
                     // produce to input queues from this NIC
                     let addr = outputq[i].pop_front().unwrap();
                     let x = outputq[i].pop_front().unwrap();
                     let y = outputq[i].pop_front().unwrap();
-                    println!("Packet ({},{}) to {} from {}", x, y, addr, i);
+                    //println!("Packet ({},{}) to {} from {}", x, y, addr, i);
                     if addr == 255 {
-                        println!("Breaking");
-                        y_value_to_addr_255 = Some(y);
-                        break 'outer;
+                        //y_value_to_addr_255 = Some(y);
+                        break 'outer Some(y);
                     }
-                    inputq[addr as usize].push_back(x);
-                    inputq[addr as usize].push_back(y);
-                }
-            }
-            // consume this NIC's input queue
-            if inputq[i].is_empty() {
-                c.input = -1;
-            } else {
-                c.input = inputq[i].pop_front().unwrap() as i64;
-                c.execute_one();
-                while c.previous_operation != 3 {
-                    c.execute_one();
-                }
-                c.input = inputq[i].pop_front().unwrap() as i64;
-                c.execute_one();
-                while c.previous_operation != 3 {
-                    c.execute_one();
+                    comps[addr as usize].inputq.push_back(x);
+                    comps[addr as usize].inputq.push_back(y);
                 }
             }
         }
-    }
+    };
     y_value_to_addr_255.unwrap()
 }
 
@@ -91,24 +56,7 @@ pub fn solution_23b(input: &str) -> i64 {
         .collect();
     let mut nat = NAT { x: None, y: None };
     let mut last_nat_to_0_y: Option<i64> = None;
-    let mut comps: Vec<IntCodeComputer> = vec![
-        IntCodeComputer {
-            program: v.clone(),
-            pc: 0,
-            input: 0,
-            amp_input: 0,
-            use_amp_input: false,
-            input_read: false,
-            break_on_output: true,
-            break_on_input: false,
-            terminated: false,
-            relative_base: 0,
-            output: "".to_string(),
-            previous_operation: 0,
-            inputq: VecDeque::new(),
-        };
-        50
-    ];
+    let mut comps: Vec<IntCodeComputer> = vec![IntCodeComputer::new(v, true); 50];
 
     let mut idle: Vec<bool> = vec![false; 50];
     for (i, c) in comps.iter_mut().enumerate() {
