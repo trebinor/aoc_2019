@@ -12,70 +12,76 @@ pub fn original_15a(input: &str) -> u32 {
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
 
-    let mut rng = rand::thread_rng();
     let mut min_steps: u32 = std::u32::MAX;
-    let mut grid = [[' '; GRID_X]; GRID_Y];
-    let mut x;
-    let mut y;
     // TODO: Implement proper, non-random, faster solution.
-    for i in 1..=100 {
-        x = GRID_X / 2;
-        y = GRID_Y / 2;
-        grid[x][y] = 'X';
-        println!("Sim {}", i);
-        let mut steps: u32 = 0;
-        let mut icc = IntCodeComputer::new(v.clone(), true); 
-        icc.program.resize(1024 * 1024, 0);
-        loop {
-            icc.inputq.push_back(rng.gen_range(1, 5)); //NSWE
-            icc.execute();
-            match icc.consume_output().parse().unwrap() {
-                0 => {
-                    match icc.inputq.back().unwrap() {
-                        1 => grid[x][y + 1] = '#',
-                        2 => grid[x][y - 1] = '#',
-                        3 => grid[x - 1][y] = '#',
-                        4 => grid[x + 1][y] = '#',
-                        _ => unreachable!(),
-                    };
-                    //println!("Robot found wall. Still at ({},{})", x, y);
-                }
-                1 => {
-                    grid[x][y] = if grid[x][y] == 'X' { 'X' } else { '.' };
-                    match icc.inputq.back().unwrap() {
-                        1 => y += 1,
-                        2 => y -= 1,
-                        3 => x -= 1,
-                        4 => x += 1,
-                        _ => unreachable!(),
-                    }
-                    //println!("Robot moved to ({},{})", x, y);
-                    grid[x][y] = if grid[x][y] == 'X' { 'X' } else { '.' };
-                    steps += 1;
-                }
-                2 => {
-                    grid[x][y] = if grid[x][y] == 'X' { 'X' } else { '.' };
-                    match icc.inputq.back().unwrap() {
-                        1 => y += 1,
-                        2 => y -= 1,
-                        3 => x -= 1,
-                        4 => x += 1,
-                        _ => unreachable!(),
-                    }
-                    //println!("Robot moved to ({},{}) and found oxygen system there", x, y);
-                    grid[x][y] = 'S';
-                    steps += 1;
-                    break;
-                }
-                _ => unreachable!(),
-            }
-        }
+    for i in 1..=10000 {
+        print!("Sim {} ", i);
+        let steps = random_walk(v.clone());
         min_steps = std::cmp::min(steps, min_steps);
+        println!(" min steps: {}", min_steps);
     }
-    print_grid(&grid);
+    //print_grid(&grid);
     min_steps
 }
 
+fn random_walk(program: Vec<i64>) -> u32 {
+    let mut grid = [[' '; GRID_X]; GRID_Y];
+    let mut x = GRID_X / 2;
+    let mut y = GRID_Y / 2;
+    grid[x][y] = 'X';
+    let mut rng = rand::thread_rng();
+    let mut steps: u32 = 0;
+    let mut icc = IntCodeComputer::new(program, true);
+    icc.program.resize(1024 * 1024, 0);
+    loop {
+        let movement = rng.gen_range(1, 5); //NSWE
+        icc.inputq.push_back(movement);
+        icc.execute();
+        assert!(!icc.output.is_empty());
+        match icc.consume_output().parse().unwrap() {
+            0 => {
+                match movement {
+                    1 => grid[x][y + 1] = '#',
+                    2 => grid[x][y - 1] = '#',
+                    3 => grid[x - 1][y] = '#',
+                    4 => grid[x + 1][y] = '#',
+                    _ => unreachable!(),
+                };
+                //println!("Robot found wall. Still at ({},{})", x, y);
+            }
+            1 => {
+                grid[x][y] = if grid[x][y] == 'X' { 'X' } else { '.' };
+                match movement {
+                    1 => y += 1,
+                    2 => y -= 1,
+                    3 => x -= 1,
+                    4 => x += 1,
+                    _ => unreachable!(),
+                }
+                //println!("Robot moved to ({},{})", x, y);
+                grid[x][y] = if grid[x][y] == 'X' { 'X' } else { '.' };
+                steps += 1;
+            }
+            2 => {
+                grid[x][y] = if grid[x][y] == 'X' { 'X' } else { '.' };
+                match movement {
+                    1 => y += 1,
+                    2 => y -= 1,
+                    3 => x -= 1,
+                    4 => x += 1,
+                    _ => unreachable!(),
+                }
+                //println!("Robot moved to ({},{}) and found oxygen system there", x, y);
+                grid[x][y] = 'S';
+                steps += 1;
+                break steps;
+            }
+            _ => unreachable!(),
+        }
+    }
+}
+
+#[allow(dead_code)]
 fn print_grid(grid: &[[char; GRID_X]; GRID_Y]) {
     for a in 0..GRID_X {
         for b in 0..GRID_Y {

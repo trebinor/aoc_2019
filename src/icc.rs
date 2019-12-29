@@ -19,9 +19,6 @@ enum Operation {
 pub struct IntCodeComputer {
     pub program: Vec<i64>,
     pub pc: usize,
-    pub amp_input: i64,
-    pub use_amp_input: bool,
-    pub input_read: bool,
     pub break_on_output: bool,
     pub terminated: bool,
     pub relative_base: i64,
@@ -31,14 +28,11 @@ pub struct IntCodeComputer {
 }
 
 impl IntCodeComputer {
-    pub fn new(program: Vec<i64>, break_on_output: bool) -> IntCodeComputer {
+    pub fn new(program: Vec<i64>, output_break: bool) -> IntCodeComputer {
         IntCodeComputer {
             program: program.to_vec().clone(),
             pc: 0,
-            amp_input: 0,
-            use_amp_input: false,
-            input_read: false,
-            break_on_output: break_on_output,
+            break_on_output: output_break,
             terminated: false,
             relative_base: 0,
             output: "".to_string(),
@@ -94,16 +88,14 @@ impl IntCodeComputer {
         match self.previous_operation {
             1 => self.add(p0, p1, p2),
             2 => self.mul(p0, p1, p2),
-            3 => self.store(p0),
+            3 => self.input(p0),
             4 => self.produce_output(p0),
             5 => self.conditional(p0, p1, p2, Operation::JumpIfTrue),
             6 => self.conditional(p0, p1, p2, Operation::JumpIfFalse),
             7 => self.conditional(p0, p1, p2, Operation::LessThan),
             8 => self.conditional(p0, p1, p2, Operation::Equals),
             9 => self.relative_base(p0),
-            99 => {
-                self.terminated = true;
-            }
+            99 => self.terminated = true,
             _ => panic!(),
         }
     }
@@ -168,29 +160,17 @@ impl IntCodeComputer {
         self.pc += 4;
     }
 
-    fn store(&mut self, p0: ParameterMode) {
+    fn input(&mut self, p0: ParameterMode) {
         let output_addr = match p0 {
             ParameterMode::Position => self.position_address(1),
             ParameterMode::Relative => self.relative_address(1),
             _ => unreachable!(),
         };
-        // TODO: Remove this state from icc
-        /*
-        if self.use_amp_input {
-            if self.input_read {
-                self.program[output_addr as usize] = self.amp_input;
-            } else {
-                self.input_read = true;
-                self.program[output_addr as usize] = self.input;
-            }
-        } else {*/
-        //self.program[output_addr as usize] = self.input;
         if !self.inputq.is_empty() {
             self.program[output_addr as usize] = self.inputq.pop_front().unwrap();
         } else {
             self.program[output_addr as usize] = -1;
         }
-        //}
         self.pc += 2;
     }
 
@@ -201,7 +181,6 @@ impl IntCodeComputer {
             ParameterMode::Relative => self.relative(1),
         };
         self.pc += 2;
-        //println!("Output {}", s0.to_string());
         self.output.push_str(&s0.to_string());
     }
 

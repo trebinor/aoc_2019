@@ -14,17 +14,15 @@ pub fn original_7a(input: &str) -> i64 {
         .collect::<Vec<String>>();
     let mut max_output: i64 = std::i64::MIN;
     for p in phases {
-        let mut amps: Vec<IntCodeComputer> = vec![
-            IntCodeComputer::new(v.clone(), false);
-            5
-        ];
+        let mut amps: Vec<IntCodeComputer> = vec![IntCodeComputer::new(v.clone(), false); 5];
+        amps[0].inputq.push_front(0);
         let d = p.chars().flat_map(|c| c.to_digit(10)).collect::<Vec<u32>>();
         for i in 0..=4 {
-            amps[i].inputq.push_back(d[i] as i64);
+            amps[i].inputq.push_front(d[i] as i64);
             amps[i].execute();
             let output = amps[i].consume_output().parse::<i64>().unwrap();
             if i < 4 {
-                amps[i + 1].amp_input = output;
+                amps[i + 1].inputq.push_front(output);
             } else {
                 max_output = std::cmp::max(output, max_output);
             }
@@ -75,14 +73,15 @@ pub fn original_7b(input: &str) -> i64 {
         .collect::<Vec<String>>();
     let mut max_output: i64 = std::i64::MIN;
     for p in phases {
-        let mut amps: Vec<IntCodeComputer> = vec![
-            IntCodeComputer::new(v.clone(), true);
-            5
-        ];
+        let mut amps: Vec<IntCodeComputer> = vec![IntCodeComputer::new(v.clone(), true); 5];
+        amps[0].inputq.push_front(0);
+        let mut first_loop = true;
         'this_phase: loop {
             let d = p.chars().flat_map(|c| c.to_digit(10)).collect::<Vec<u32>>();
             for i in 0..=4 {
-                amps[i].inputq.push_back(d[i] as i64);
+                if first_loop {
+                    amps[i].inputq.push_front(d[i] as i64);
+                }
                 amps[i].execute();
                 if i < 4 {
                     if amps[i].terminated {
@@ -93,16 +92,17 @@ pub fn original_7b(input: &str) -> i64 {
                 }
                 let output = amps[i].consume_output().parse::<i64>().unwrap();
                 if i < 4 {
-                    amps[i + 1].amp_input = output;
+                    amps[i + 1].inputq.push_front(output);
                 } else {
                     max_output = std::cmp::max(output, max_output);
                     if amps[4].terminated {
                         break 'this_phase;
                     } else {
-                        amps[0].amp_input = output;
+                        amps[0].inputq.push_front(output);
                     }
                 }
             }
+            first_loop = false;
         }
     }
     max_output

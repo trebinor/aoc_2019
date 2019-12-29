@@ -57,6 +57,7 @@ pub fn original_13b(input: &str) -> i64 {
     v[0] = 2; // 2 quarters
     let mut icc = IntCodeComputer::new(v, true);
     icc.program.resize(1024 * 1024, 0);
+    icc.inputq.push_back(0); // neutral joystick by default
     let mut score: i64 = 0;
     let mut paddle_x: i32 = 0;
     let mut ball_x: i32 = 0;
@@ -83,13 +84,19 @@ pub fn original_13b(input: &str) -> i64 {
                 }
             }
         }
-        icc.inputq.push_back(if ball_x < paddle_x {
+        let new_input = if ball_x < paddle_x {
             -1
         } else if ball_x > paddle_x {
             1
         } else {
             0
-        });
+        };
+        if icc.inputq.is_empty() {
+            icc.inputq.push_back(new_input)
+        } else {
+            let back = icc.inputq.back_mut().unwrap();
+            *back = new_input;
+        }
     }
     score
 }

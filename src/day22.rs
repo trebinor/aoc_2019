@@ -27,7 +27,7 @@ fn cut(cards: &mut [usize], offset: i32) {
 }
 
 #[aoc(day22, part1)]
-pub fn solution_22a(input: &str) -> usize {
+pub fn solution_22a(input: &str) -> u64 {
     let s: Vec<&str> = input.lines().map(|l| l.trim()).collect();
     let mut cards = [0; 10007];
     for i in 0..cards.len() {
@@ -45,7 +45,7 @@ pub fn solution_22a(input: &str) -> usize {
             panic!("Unhandled card command! {}", l);
         }
     }
-    cards.to_vec().iter().position(|e| *e == 2019).unwrap()
+    cards.to_vec().iter().position(|e| *e == 2019).unwrap() as u64
 }
 
 #[aoc(day22, part2)]
@@ -82,8 +82,8 @@ mod tests {
     use day22::solution_22a;
     use day22::solution_22b;
     use std::fs;
-    const ANSWER_22A: u32 = 0;
-    const ANSWER_22B: u32 = 0;
+    const ANSWER_22A: u64 = 0;
+    const ANSWER_22B: u64 = 0;
 
     #[test]
     fn original() {
