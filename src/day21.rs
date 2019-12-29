@@ -29,11 +29,14 @@ mod tests {
     const ANSWER_21B: u32 = 0;
 
     #[test]
-    fn original() {
+    fn t21a() {
         assert_eq!(
             ANSWER_21A,
             solution_21a(&fs::read_to_string("input/2019/day21.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t21b() {
         assert_eq!(
             ANSWER_21B,
             solution_21b(&fs::read_to_string("input/2019/day21.txt").unwrap().trim())

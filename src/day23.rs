@@ -129,11 +129,14 @@ mod tests {
     const ANSWER_23B: i64 = 17429;
 
     #[test]
-    fn original() {
+    fn t23a() {
         assert_eq!(
             ANSWER_23A,
             solution_23a(&fs::read_to_string("input/2019/day23.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t23b() {
         assert_eq!(
             ANSWER_23B,
             solution_23b(&fs::read_to_string("input/2019/day23.txt").unwrap().trim())

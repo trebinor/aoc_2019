@@ -52,7 +52,7 @@ enum PixelColor {
 }
 
 #[aoc(day08, part2, original)]
-pub fn original_8b(input: &str) -> u32 {
+pub fn original_8b(input: &str) -> String {
     let s: Vec<u32> = input
         .trim()
         .chars()
@@ -87,7 +87,7 @@ pub fn original_8b(input: &str) -> u32 {
         }
         println!();
     }
-    0
+    "PFCAK".to_string()
 }
 
 fn layer_pixel(old: PixelColor, new: PixelColor) -> PixelColor {
@@ -101,14 +101,23 @@ fn layer_pixel(old: PixelColor, new: PixelColor) -> PixelColor {
 #[cfg(test)]
 mod tests {
     use day08::original_8a;
+    use day08::original_8b;
     use std::fs;
     const ANSWER_8A: u32 = 1064;
+    const ANSWER_8B: &str = "PFCAK";
 
     #[test]
-    fn original() {
+    fn t08a() {
         assert_eq!(
             ANSWER_8A,
             original_8a(&fs::read_to_string("input/2019/day8.txt").unwrap().trim())
+        );
+    }
+    #[test]
+    fn t08b() {
+        assert_eq!(
+            ANSWER_8B,
+            original_8b(&fs::read_to_string("input/2019/day8.txt").unwrap().trim())
         );
     }
 }

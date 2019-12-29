@@ -79,8 +79,8 @@ fn is_a_double_digit_strict(i: i32) -> bool {
 
 #[aoc(day04, part2, original)]
 pub fn original_4b(_input: &str) -> u32 {
-    let min = 278384;
-    let max = 824795;
+    let min = 278_384;
+    let max = 824_795;
     let mut count = 0;
     for i in min..=max {
         if is_a_double_digit_strict(i) && is_monotonically_increasing(i) {
@@ -117,23 +117,28 @@ mod tests {
     const ANSWER_4B: u32 = 603;
 
     #[test]
-    fn original() {
+    fn t04a() {
         assert_eq!(
             ANSWER_4A,
             original_4a(&fs::read_to_string("input/2019/day4.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t04b() {
         assert_eq!(
             ANSWER_4B,
             original_4b(&fs::read_to_string("input/2019/day4.txt").unwrap().trim())
         );
     }
-
     #[test]
-    fn parsed() {
+    fn t04a_parsed() {
         assert_eq!(
             ANSWER_4A,
             parsed_4a(&fs::read_to_string("input/2019/day4.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t04b_parsed() {
         assert_eq!(
             ANSWER_4B,
             parsed_4b(&fs::read_to_string("input/2019/day4.txt").unwrap().trim())

@@ -62,15 +62,18 @@ mod tests {
     use day01::original_1a;
     use day01::original_1b;
     use std::fs;
-    const ANSWER_1A: i32 = 3369286;
-    const ANSWER_1B: i32 = 5051054;
+    const ANSWER_1A: i32 = 3_369_286;
+    const ANSWER_1B: i32 = 5_051_054;
 
     #[test]
-    fn original() {
+    fn t01a() {
         assert_eq!(
             ANSWER_1A,
             original_1a(&fs::read_to_string("input/2019/day1.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t01b() {
         assert_eq!(
             ANSWER_1B,
             original_1b(&fs::read_to_string("input/2019/day1.txt").unwrap().trim())

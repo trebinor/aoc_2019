@@ -159,13 +159,16 @@ mod tests {
     const ANSWER_11B: u32 = 249;
 
     #[test]
-    fn original() {
+    fn t11a() {
         assert_eq!(
             ANSWER_11A,
             paint_panels_start_black(&generator(
                 &fs::read_to_string("input/2019/day11.txt").unwrap().trim()
             ))
         );
+    }
+    #[test]
+    fn t11b() {
         assert_eq!(
             ANSWER_11B,
             paint_panels_start_white(&generator(

@@ -386,11 +386,14 @@ mod tests {
     const ANSWER_15B: u32 = 340;
 
     #[test]
-    fn solutions() {
+    fn t15a() {
         assert_eq!(
             ANSWER_15A,
             original_15a(&fs::read_to_string("input/2019/day15.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t15b() {
         assert_eq!(
             ANSWER_15B,
             original_15b(&fs::read_to_string("input/2019/day15.txt").unwrap().trim())

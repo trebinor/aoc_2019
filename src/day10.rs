@@ -218,13 +218,16 @@ mod tests {
     const UNIT_ANSWER_10A_4: Point = Point { x: 11, y: 13 };
 
     #[test]
-    fn answer_10_a_b() {
+    fn t10a() {
         assert_eq!(
             ANSWER_10A,
             visible_asteroids(&generator(
                 &fs::read_to_string("input/2019/day10.txt").unwrap().trim()
             ))
         );
+    }
+    #[test]
+    fn t10b() {
         assert_eq!(
             ANSWER_10B,
             math_on_200th_asteroid(&generator(
@@ -232,49 +235,48 @@ mod tests {
             ))
         );
     }
-
     #[test]
-    fn supplied_inputs_10a_1() {
+    fn t10a_supplied_inputs_1() {
         assert_eq!(
             UNIT_ANSWER_10A_1,
             AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_1))
         );
     }
     #[test]
-    fn supplied_inputs_10a_2() {
+    fn t10a_supplied_inputs_2() {
         assert_eq!(
             UNIT_ANSWER_10A_2,
             AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_2))
         );
     }
     #[test]
-    fn supplied_inputs_10a_3() {
+    fn t10a_supplied_inputs_3() {
         assert_eq!(
             UNIT_ANSWER_10A_3,
             AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_3))
         );
     }
     #[test]
-    fn supplied_inputs_10a_4() {
+    fn t10a_supplied_inputs_4() {
         assert_eq!(
             UNIT_ANSWER_10A_4,
             AsteroidSightMap::new().find_best_point(&generator(UNIT_INPUT_10A_4))
         );
     }
     #[test]
-    fn asteroids_count_10a_1() {
+    fn t10a_asteroids_count_1() {
         assert_eq!(33, visible_asteroids(&generator(UNIT_INPUT_10A_1)));
     }
     #[test]
-    fn asteroids_count_10a_2() {
+    fn t10a_asteroids_count_2() {
         assert_eq!(35, visible_asteroids(&generator(UNIT_INPUT_10A_2)));
     }
     #[test]
-    fn asteroids_count_10a_3() {
+    fn t10a_asteroids_count_3() {
         assert_eq!(41, visible_asteroids(&generator(UNIT_INPUT_10A_3)));
     }
     #[test]
-    fn asteroids_count_10a_4() {
+    fn t10a_asteroids_count_4() {
         assert_eq!(210, visible_asteroids(&generator(UNIT_INPUT_10A_4)));
     }
 }

@@ -198,14 +198,18 @@ pub fn icc_5a(input: &str) -> String {
         .split(',')
         .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    let mut icc = IntCodeComputer::new(v, false);
+    let mut icc = IntCodeComputer::new(v, true);
     icc.inputq.push_back(1);
-    let mut output = "".to_string();
-    while !icc.terminated {
+    loop {
         icc.execute();
-        output.push_str(&format!("{}", icc.consume_output()));
+        let output = icc.consume_output();
+        icc.execute_one();
+        if icc.terminated {
+            break output;
+        } else {
+            assert_eq!(output, "0");
+        }
     }
-    output
 }
 
 #[aoc(day05, part2, icc)]
@@ -232,11 +236,14 @@ mod tests {
     const ANSWER_5B: &str = "9386583";
 
     #[test]
-    fn original() {
+    fn t05a() {
         assert!(
             original_5a(&fs::read_to_string("input/2019/day5.txt").unwrap().trim())
                 .ends_with(ANSWER_5A)
         );
+    }
+    #[test]
+    fn t05b() {
         assert!(
             original_5b(&fs::read_to_string("input/2019/day5.txt").unwrap().trim())
                 .ends_with(ANSWER_5B)
@@ -244,10 +251,14 @@ mod tests {
     }
 
     #[test]
-    fn icc() {
-        assert!(
-            icc_5a(&fs::read_to_string("input/2019/day5.txt").unwrap().trim()).ends_with(ANSWER_5A)
+    fn t05a_icc() {
+        assert_eq!(
+            ANSWER_5A,
+            icc_5a(&fs::read_to_string("input/2019/day5.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t05b_icc() {
         assert!(
             icc_5b(&fs::read_to_string("input/2019/day5.txt").unwrap().trim()).ends_with(ANSWER_5B)
         );

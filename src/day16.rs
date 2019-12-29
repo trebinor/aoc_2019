@@ -14,7 +14,7 @@ pub fn solution_16a(input: &str) -> String {
             let mut j = 0;
             let mut first_value_skipped: bool = false;
             'repeat: loop {
-                for _k in 0..(i + 1) {
+                for _k in 0..=i {
                     if !first_value_skipped {
                         first_value_skipped = true;
                         continue;
@@ -72,11 +72,14 @@ mod tests {
     const ANSWER_16B: &str = "36265589";
 
     #[test]
-    fn original() {
+    fn t16a() {
         assert_eq!(
             ANSWER_16A,
             solution_16a(&fs::read_to_string("input/2019/day16.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t16b() {
         assert_eq!(
             ANSWER_16B,
             solution_16b(&fs::read_to_string("input/2019/day16.txt").unwrap().trim())

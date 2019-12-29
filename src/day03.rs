@@ -186,11 +186,14 @@ mod tests {
     const ANSWER_3B: u32 = 56410;
 
     #[test]
-    fn original() {
+    fn t03a() {
         assert_eq!(
             ANSWER_3A,
             original_3a(&fs::read_to_string("input/2019/day3.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t03b() {
         assert_eq!(
             ANSWER_3B,
             original_3b(&fs::read_to_string("input/2019/day3.txt").unwrap().trim())

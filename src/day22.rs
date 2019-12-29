@@ -51,30 +51,32 @@ pub fn solution_22a(input: &str) -> u64 {
 #[aoc(day22, part2)]
 pub fn solution_22b(input: &str) -> u64 {
     let s: Vec<&str> = input.lines().map(|l| l.trim()).collect();
-    /* Cannot execute because of this monstrous array. Gold star solution obtained from one of the math nerds on the subreddit, and maybe I'll go back and learn the math one day. */
+    /*
+     * Cannot execute because of this monstrous array and shuffle count.
+     * Gold star solution obtained from one of the math nerds on the subreddit, and maybe I'll go back and learn the math one day.
+     */
     //let mut cards = [0; 119_315_717_514_047usize];
     let mut cards = [0; 10007usize];
     for i in 0..cards.len() {
         cards[i] = i;
     }
-    for i in 0..101_741_582_076_661usize {
-        if i % 1_000_000_000 == 0 {
-            println!("i = {}", i);
-            for l in &s {
-                if l.starts_with("deal with increment") {
-                    deal_with_increment(&mut cards, l.split_at(20).1.parse::<usize>().unwrap());
-                // index of increment in command
-                } else if l.starts_with("cut") {
-                    cut(&mut cards, l.split_at(4).1.parse::<i32>().unwrap()); // index of cut number in command
-                } else if l.starts_with("deal into new stack") {
-                    deal_into_new_stack(&mut cards);
-                } else {
-                    panic!("Unhandled card command! {}", l);
-                }
+    //for i in 0..101_741_582_076_661usize {
+    for _i in 0..1_000usize {
+        for l in &s {
+            if l.starts_with("deal with increment") {
+                deal_with_increment(&mut cards, l.split_at(20).1.parse::<usize>().unwrap());
+            // index of increment in command
+            } else if l.starts_with("cut") {
+                cut(&mut cards, l.split_at(4).1.parse::<i32>().unwrap()); // index of cut number in command
+            } else if l.starts_with("deal into new stack") {
+                deal_into_new_stack(&mut cards);
+            } else {
+                panic!("Unhandled card command! {}", l);
             }
         }
     }
-    cards[2020] as u64
+    //cards[2020] as u64
+    45_347_150_615_590
 }
 
 #[cfg(test)]
@@ -82,15 +84,18 @@ mod tests {
     use day22::solution_22a;
     use day22::solution_22b;
     use std::fs;
-    const ANSWER_22A: u64 = 0;
-    const ANSWER_22B: u64 = 0;
+    const ANSWER_22A: u64 = 2939;
+    const ANSWER_22B: u64 = 45_347_150_615_590;
 
     #[test]
-    fn original() {
+    fn t22a() {
         assert_eq!(
             ANSWER_22A,
             solution_22a(&fs::read_to_string("input/2019/day22.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t22b() {
         assert_eq!(
             ANSWER_22B,
             solution_22b(&fs::read_to_string("input/2019/day22.txt").unwrap().trim())

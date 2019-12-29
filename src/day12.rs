@@ -120,7 +120,7 @@ pub fn total_energy_all_planets(v: &[Position]) -> u64 {
 }
 
 #[aoc(day12, part2)]
-pub fn part_2(v: &[Position]) -> u64 {
+pub fn steps_to_repeat(v: &[Position]) -> u64 {
     let mut bodies: Vec<PlanetaryBody> = Vec::new();
     for position in v {
         let mut body = PlanetaryBody::new();
@@ -199,4 +199,33 @@ pub fn part_2(v: &[Position]) -> u64 {
     }
     // Positions repeat one step at the calculated period because velocity is 0. Add 1 to each to compensate.
     (x_period.unwrap() + 1).lcm(&(y_period.unwrap() + 1).lcm(&(z_period.unwrap() + 1)))
+}
+
+#[cfg(test)]
+mod tests {
+    use day12::generator;
+    use day12::steps_to_repeat;
+    use day12::total_energy_all_planets;
+    use std::fs;
+    const ANSWER_12A: u64 = 9139;
+    const ANSWER_12B: u64 = 420_788_524_631_496;
+
+    #[test]
+    fn t12a() {
+        assert_eq!(
+            ANSWER_12A,
+            total_energy_all_planets(&generator(
+                &fs::read_to_string("input/2019/day12.txt").unwrap().trim()
+            ))
+        );
+    }
+    #[test]
+    fn t12b() {
+        assert_eq!(
+            ANSWER_12B,
+            steps_to_repeat(&generator(
+                &fs::read_to_string("input/2019/day12.txt").unwrap().trim()
+            ))
+        );
+    }
 }

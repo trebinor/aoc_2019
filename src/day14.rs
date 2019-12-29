@@ -122,17 +122,20 @@ mod tests {
     use day14::solution_14a;
     use day14::solution_14b;
     use std::fs;
-    const ANSWER_14A: u64 = 443537;
-    const ANSWER_14B: u64 = 2910558;
+    const ANSWER_14A: u64 = 443_537;
+    const ANSWER_14B: u64 = 2_910_558;
 
     #[test]
-    fn solutions() {
+    fn t14a() {
         assert_eq!(
             ANSWER_14A,
             solution_14a(&generate_recipes(
                 &fs::read_to_string("input/2019/day14.txt").unwrap().trim()
             ))
         );
+    }
+    #[test]
+    fn t14b() {
         assert_eq!(
             ANSWER_14B,
             solution_14b(&generate_recipes(

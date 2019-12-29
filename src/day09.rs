@@ -37,11 +37,14 @@ mod tests {
     const ANSWER_9B: i64 = 73144;
 
     #[test]
-    fn original() {
+    fn t09a() {
         assert_eq!(
             ANSWER_9A,
             original_9a(&fs::read_to_string("input/2019/day9.txt").unwrap().trim())
         );
+    }
+    #[test]
+    fn t09b() {
         assert_eq!(
             ANSWER_9B,
             original_9b(&fs::read_to_string("input/2019/day9.txt").unwrap().trim())
