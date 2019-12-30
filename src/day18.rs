@@ -1,3 +1,6 @@
+//use petgraph::algo::astar;
+//use petgraph::Graph;
+
 #[aoc(day18, part1)]
 pub fn solution_18a(input: &str) -> u32 {
     let s: Vec<u32> = input

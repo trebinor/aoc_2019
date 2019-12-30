@@ -9,6 +9,7 @@ extern crate lazy_static;
 extern crate chrono;
 extern crate itertools;
 extern crate num;
+extern crate petgraph;
 extern crate rand;
 extern crate regex;
 
