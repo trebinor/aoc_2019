@@ -111,17 +111,11 @@ fn next_state(current_state: Life, adjacents: &[Life]) -> Life {
 }
 
 fn new_generation_recursive(grids: &mut VecDeque<GridLevel>) {
-    let outer_grid = [[Life::Empty; GRID_X]; GRID_Y];
-    let inner_grid = [[Life::Empty; GRID_X]; GRID_Y];
-    grids.push_back(outer_grid.clone());
-    grids.push_front(inner_grid.clone());
     let gc = grids.clone();
     for g in 1..grids.len() - 1 {
-        //println!("g {}", g);
         // skip first grid since we know it's empty and it makes the algorithm work up in all cases
         for i in 0..GRID_X {
             for j in 0..GRID_Y {
-                //println!("({},{})", i, j);
                 match (i, j) {
                     (0, 0) => {
                         grids[g][i][j] = next_state(
@@ -313,12 +307,16 @@ pub fn total_bugs_200_iterations(grid: &GridLevel) -> usize {
 fn total_bugs_n_iterations(grid: &GridLevel, n: usize) -> usize {
     let mut grids: VecDeque<GridLevel> = VecDeque::new();
     grids.push_front(grid.clone());
+    // prefill more than enough inner and outer grids, a pair per generation, to avoid adding logic for detecting when they need to be added
+    let outer_grid = [[Life::Empty; GRID_X]; GRID_Y];
+    let inner_grid = [[Life::Empty; GRID_X]; GRID_Y];
     for _iterations in 0..n {
-        println!("n{}", _iterations);
+        grids.push_back(outer_grid.clone());
+        grids.push_front(inner_grid.clone());
+    }
+
+    for _iterations in 0..n {
         new_generation_recursive(&mut grids);
-        for g in grids.clone() {
-            print_generation(g);
-        }
     }
     grids.iter().fold(0, |acc, g| acc + total_bugs(*g))
 }
