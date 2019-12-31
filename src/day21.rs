@@ -1,22 +1,32 @@
+use icc::IntCodeComputer;
+
 #[aoc(day21, part1)]
 pub fn solution_21a(input: &str) -> u32 {
-    let s: Vec<u32> = input
+    let v: Vec<i64> = input
         .trim()
-        .chars()
-        .map(|n| n.to_string().parse::<u32>().unwrap())
+        .split(',')
+        .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    println!("{:?}", s);
+    let mut icc = IntCodeComputer::new(v, false);
+    icc.program.resize(1024 * 1024, 0);
+    // set inputs
+    icc.execute();
+    let _output = icc.consume_output();
     0
 }
 
 #[aoc(day21, part2)]
 pub fn solution_21b(input: &str) -> u32 {
-    let s: Vec<u32> = input
+    let v: Vec<i64> = input
         .trim()
-        .chars()
-        .map(|n| n.to_string().parse::<u32>().unwrap())
+        .split(',')
+        .map(|o| o.parse::<i64>().unwrap())
         .collect();
-    println!("{:?}", s);
+    let mut icc = IntCodeComputer::new(v, false);
+    icc.program.resize(1024 * 1024, 0);
+    // set inputs
+    icc.execute();
+    let _output = icc.consume_output();
     0
 }
 

@@ -113,7 +113,7 @@ fn next_state(current_state: Life, adjacents: &[Life]) -> Life {
 fn new_generation_recursive(grids: &mut VecDeque<GridLevel>) {
     let gc = grids.clone();
     for g in 1..grids.len() - 1 {
-        // skip first grid since we know it's empty and it makes the algorithm work up in all cases
+        // skip first and last grids since we know they're empty and it makes the algorithm work in all cases
         for i in 0..GRID_X {
             for j in 0..GRID_Y {
                 match (i, j) {
@@ -329,7 +329,7 @@ mod tests {
     use day24::total_bugs_n_iterations;
     use std::fs;
     const ANSWER_24A: usize = 1_151_290;
-    const ANSWER_24B: usize = 0;
+    const ANSWER_24B: usize = 1953;
     const UNIT_ANSWER_24A: usize = 2_129_920;
     const UNIT_ANSWER_24B: usize = 99;
     const UNIT_INPUT_24A: &str = r"....#
