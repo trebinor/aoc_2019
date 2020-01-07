@@ -1,21 +1,97 @@
-//use petgraph::algo::astar;
-//use petgraph::Graph;
+use std::collections::VecDeque;
+
+pub struct Maze {
+    grid: Vec<Vec<char>>,
+    doors: Vec<char>,
+    origin: (usize, usize),
+}
+
+pub struct PathHead {
+    pub x: usize,
+    pub y: usize,
+    pub keys: Vec<char>,
+}
+
+impl Maze {
+    pub fn new(w: usize, h: usize) -> Maze {
+        Maze {
+            grid: vec![vec![' '; w]; h],
+            doors: Vec::new(),
+            origin: (0, 0),
+        }
+    }
+
+    #[allow(dead_code)]
+    fn display(&self, maze: Maze) {
+        for row in maze {
+            for c in row {
+                print!("{}", c);
+            }
+            println!();
+        }
+    }
+
+    fn doors_locked(&self, paths: Vec<PathHead>) -> bool {
+        !paths.any(|p| p.keys().len() >= self.doors.len())
+    }
+}
+
+// TODO: File issue with gobanos/aoc-runner. Why can't I get Vec<Vec<char>> to work with the generator?
+#[aoc_generator(day18)]
+pub fn generator(input: &str) -> Maze {
+    let v = input.lines().map(|l| l.trim()).collect::<Vec<&str>>();
+    let h = v.len();
+    let w = v[0].len();
+    let mut maze: Maze = Maze::new(v[0].len(), v.len());
+    for (i, l) in v.iter().enumerate() {
+        for (j, x) in l.chars().enumerate() {
+            maze.grid[i][j] = x;
+            match x {
+                '@' => maze.origin = (i, j),
+                'A'..='Z' => maze.doors.push(x),
+                _ => {}
+            }
+        }
+    }
+    maze
+}
+
+/*
+fn find_origin(maze: Maze) -> (usize, usize) {
+    for (j, row) in maze.iter().enumerate() {
+        for (i, c) in row.iter().enumerate() {
+            if *c == '@' {
+                return (i, j);
+            }
+        }
+    }
+    unreachable!();
+}
+*/
 
 #[aoc(day18, part1)]
 pub fn shortest_path_to_all_keys(input: &str) -> usize {
-    let _v = input.lines().map(|l| l.trim()).collect::<Vec<&str>>();
+    let maze = generator(input);
+    let origin = find_origin(maze);
+    let mut paths: VecDeque<PathHead> = VecDeque::new();
+    paths.push_back(origin);
+    while maze.doors_locked(paths) {
+        let heads = paths.len();
+        for p in paths {
+            match p.
+        }
+    }
     0
 }
 
 #[aoc(day18, part2)]
 pub fn solution_18b(input: &str) -> usize {
-    let _v = input.lines().map(|l| l.trim()).collect::<Vec<&str>>();
+    let _maze = generator(input);
     0
 }
 
 #[cfg(test)]
 mod tests {
-    //use day18::generator;
     use day18::shortest_path_to_all_keys;
     use day18::solution_18b;
     use std::fs;
