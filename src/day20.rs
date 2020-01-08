@@ -8,9 +8,9 @@ type Maze = Vec<Vec<char>>;
 
 #[allow(dead_code)]
 fn display(maze: Maze) {
-    for (i, x) in maze.iter().enumerate() {
-        for (j, _y) in x.iter().enumerate() {
-            print!("{}", maze[i][j]);
+    for (j, y) in maze.iter().enumerate() {
+        for (i, _x) in y.iter().enumerate() {
+            print!("{}", maze[j][i]);
         }
         println!();
     }
@@ -32,12 +32,11 @@ impl PartialEq for Point {
 pub fn generator(input: &str) -> Maze {
     println!("Input is {}", input);
     let v = input.lines().map(|l| l).collect::<Vec<&str>>();
-    let mut maze: Maze = vec![vec![' '; v.len()]; v[0].len()];
-    //let mut maze: Maze = vec![vec![' '; v[0].len()]; v.len()];
+    let mut maze: Maze = vec![vec![' '; v[0].len()]; v.len()];
 
-    for (j, l) in v.iter().enumerate() {
-        for (i, x) in l.chars().enumerate() {
-            maze[i][j] = x;
+    for (y, l) in v.iter().enumerate() {
+        for (x, c) in l.chars().enumerate() {
+            maze[y][x] = c;
         }
     }
     maze
@@ -45,38 +44,38 @@ pub fn generator(input: &str) -> Maze {
 
 #[aoc(day20, part1)]
 pub fn shortest_portal_path(input: &Maze) -> usize {
-    //display(input.to_vec());
+    display(input.to_vec());
     let mut portals: HashMap<String, Vec<Point>> = HashMap::new();
     let mut spaces: HashMap<Point, NodeIndex<DefaultIx>> = HashMap::new();
     let mut graph = Graph::<Point, usize, Undirected>::new_undirected();
-    for (i, x) in input.iter().enumerate() {
-        for (j, _y) in x.iter().enumerate() {
-            if input[i][j] == '.' {
+    for (j, y) in input.iter().enumerate() {
+        for (i, _x) in y.iter().enumerate() {
+            if input[j][i] == '.' {
                 let mut name: String = "".to_string();
-                if input[i - 1][j].is_ascii_uppercase() {
-                    name.push(input[i - 2][j]);
-                    name.push(input[i - 1][j]);
-                } else if input[i + 1][j].is_ascii_uppercase() {
-                    name.push(input[i + 1][j]);
-                    name.push(input[i + 2][j]);
-                } else if input[i][j - 1].is_ascii_uppercase() {
-                    name.push(input[i][j - 2]);
-                    name.push(input[i][j - 1]);
-                } else if input[i][j + 1].is_ascii_uppercase() {
-                    name.push(input[i][j + 1]);
-                    name.push(input[i][j + 2]);
+                if input[j - 1][i].is_ascii_uppercase() {
+                    name.push(input[j - 2][i]);
+                    name.push(input[j - 1][i]);
+                } else if input[j + 1][i].is_ascii_uppercase() {
+                    name.push(input[j + 1][i]);
+                    name.push(input[j + 2][i]);
+                } else if input[j][i - 1].is_ascii_uppercase() {
+                    name.push(input[j][i - 2]);
+                    name.push(input[j][i - 1]);
+                } else if input[j][i + 1].is_ascii_uppercase() {
+                    name.push(input[j][i + 1]);
+                    name.push(input[j][i + 2]);
                 }
                 let p = Point { x: i, y: j };
                 let node_idx = graph.add_node(p);
                 spaces.insert(p, node_idx);
-                if input[i - 1][j] == '.' {
-                    //println!("Adding edge from {:?} to ({},{})", p, i - 1, j);
-                    let other_node = spaces.get(&Point { x: i - 1, y: j });
+                if input[j - 1][i] == '.' {
+                    //println!("Adding edge from {:?} to ({},{})", p, j - 1, i);
+                    let other_node = spaces.get(&Point { x: i, y: j - 1 });
                     graph.update_edge(node_idx, *other_node.unwrap(), 1);
                 }
-                if input[i][j - 1] == '.' {
-                    //println!("Adding edge from {:?} to ({},{})", p, i, j - 1);
-                    let other_node = spaces.get(&Point { x: i, y: j - 1 });
+                if input[j][i - 1] == '.' {
+                    //println!("Adding edge from {:?} to ({},{})", p, i - 1, j);
+                    let other_node = spaces.get(&Point { x: i - 1, y: j });
                     graph.update_edge(node_idx, *other_node.unwrap(), 1);
                 }
 
