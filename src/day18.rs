@@ -77,6 +77,7 @@ pub fn solution_18b(_input: &Maze) -> usize {
     0
 }
 
+/*
 #[cfg(test)]
 mod tests {
     use day18::shortest_path_to_all_keys;
@@ -168,3 +169,4 @@ mod tests {
         );
     }
 }
+*/
