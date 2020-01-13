@@ -66,7 +66,7 @@ impl Point {
 }
 
 #[aoc(day18, part1)]
-pub fn shortest_path_to_all_keys(input: &Maze) -> usize {
+pub fn shortest_path(input: &Maze) -> usize {
     let mut goal = Point(0, 0, 0);
     let mut origin_x: i8 = 0;
     let mut origin_y: i8 = 0;
@@ -89,15 +89,44 @@ pub fn shortest_path_to_all_keys(input: &Maze) -> usize {
 }
 
 #[aoc(day18, part2)]
-pub fn solution_18b(_input: &Maze) -> usize {
-    0
+pub fn shortest_path_with_quadbots(input: &Maze) -> usize {
+    let mut quadmaze = input.clone();
+    let mut goal = Point(0, 0, 0);
+    let mut origin_x: i8 = 0;
+    let mut origin_y: i8 = 0;
+    for (j, y) in input.iter().enumerate() {
+        for (i, _x) in y.iter().enumerate() {
+            match input[j][i] {
+                '@' => {
+                    origin_x = i as i8;
+                    origin_y = j as i8;
+                }
+                key @ 'a'..='z' => goal.add_key(key),
+                _ => {}
+            }
+        }
+    }
+    for o in [(-1, 1), (1, 1), (1, -1), (-1, -1)].iter() {
+        let i = origin_x as i8 + o.0;
+        let j = origin_y as i8 + o.1;
+        quadmaze[j as usize][i as usize] = '@'
+    }
+    for o in [(0, 0), (-1, 0), (0, 1), (1, 0), (0, -1)].iter() {
+        let i = origin_x as i8 + o.0;
+        let j = origin_y as i8 + o.1;
+        quadmaze[j as usize][i as usize] = '#'
+    }
+    let origin = Point(origin_x, origin_y, 0);
+    let shortest_path =
+        pathfinding::directed::bfs::bfs(&origin, |p| p.successors(input), |p| p.2 == goal.2);
+    shortest_path.unwrap().len() - 1 // off by 1 for some reason
 }
 
 #[cfg(test)]
 mod tests {
     use day18::generator;
-    use day18::shortest_path_to_all_keys;
-    use day18::solution_18b;
+    use day18::shortest_path;
+    use day18::shortest_path_with_quadbots;
     use std::fs;
     const ANSWER_18A: usize = 4118;
     const ANSWER_18B: usize = 0;
@@ -106,6 +135,10 @@ mod tests {
     const UNIT_ANSWER_18A_3: usize = 132;
     const UNIT_ANSWER_18A_4: usize = 136;
     const UNIT_ANSWER_18A_5: usize = 81;
+    const UNIT_ANSWER_18B_1: usize = 8;
+    const UNIT_ANSWER_18B_2: usize = 24;
+    const UNIT_ANSWER_18B_3: usize = 32;
+    const UNIT_ANSWER_18B_4: usize = 72;
     const UNIT_INPUT_18A_1: &str = r"#########
 #b.A.@.a#
 #########";
@@ -134,12 +167,42 @@ mod tests {
 ###A#B#C################
 ###g#h#i################
 ########################";
+    const UNIT_INPUT_18B_1: &str = r"#######
+#a.#Cd#
+##@#@##
+#######
+##@#@##
+#cB#Ab#
+#######";
+    const UNIT_INPUT_18B_2: &str = r"###############
+#d.ABC.#.....a#
+######@#@######
+###############
+######@#@######
+#b.....#.....c#
+###############";
+    const UNIT_INPUT_18B_3: &str = r"#############
+#DcBa.#.GhKl#
+#.###@#@#I###
+#e#d#####j#k#
+###C#@#@###J#
+#fEbA.#.FgHi#
+#############";
+    const UNIT_INPUT_18B_4: &str = r"#############
+#g#f.D#..h#l#
+#F###e#E###.#
+#dCba@#@BcIJ#
+#############
+#nK.L@#@G...#
+#M###N#H###.#
+#o#m..#i#jk.#
+#############";
 
     #[test]
     fn t18a() {
         assert_eq!(
             ANSWER_18A,
-            shortest_path_to_all_keys(&generator(
+            shortest_path(&generator(
                 &fs::read_to_string("input/2019/day18.txt").unwrap().trim()
             ))
         );
@@ -148,7 +211,7 @@ mod tests {
     fn t18b() {
         assert_eq!(
             ANSWER_18B,
-            solution_18b(&generator(
+            shortest_path_with_quadbots(&generator(
                 &fs::read_to_string("input/2019/day18.txt").unwrap().trim()
             ))
         );
@@ -157,35 +220,63 @@ mod tests {
     fn t18a_supplied_inputs_1() {
         assert_eq!(
             UNIT_ANSWER_18A_1,
-            shortest_path_to_all_keys(&generator(UNIT_INPUT_18A_1))
+            shortest_path(&generator(UNIT_INPUT_18A_1))
         );
     }
     #[test]
     fn t18a_supplied_inputs_2() {
         assert_eq!(
             UNIT_ANSWER_18A_2,
-            shortest_path_to_all_keys(&generator(UNIT_INPUT_18A_2))
+            shortest_path(&generator(UNIT_INPUT_18A_2))
         );
     }
     #[test]
     fn t18a_supplied_inputs_3() {
         assert_eq!(
             UNIT_ANSWER_18A_3,
-            shortest_path_to_all_keys(&generator(UNIT_INPUT_18A_3))
+            shortest_path(&generator(UNIT_INPUT_18A_3))
         );
     }
     #[test]
     fn t18a_supplied_inputs_4() {
         assert_eq!(
             UNIT_ANSWER_18A_4,
-            shortest_path_to_all_keys(&generator(UNIT_INPUT_18A_4))
+            shortest_path(&generator(UNIT_INPUT_18A_4))
         );
     }
     #[test]
     fn t18a_supplied_inputs_5() {
         assert_eq!(
             UNIT_ANSWER_18A_5,
-            shortest_path_to_all_keys(&generator(UNIT_INPUT_18A_5))
+            shortest_path(&generator(UNIT_INPUT_18A_5))
+        );
+    }
+    #[test]
+    fn t18b_supplied_inputs_1() {
+        assert_eq!(
+            UNIT_ANSWER_18B_1,
+            shortest_path_with_quadbots(&generator(UNIT_INPUT_18B_1))
+        );
+    }
+    #[test]
+    fn t18b_supplied_inputs_2() {
+        assert_eq!(
+            UNIT_ANSWER_18B_2,
+            shortest_path_with_quadbots(&generator(UNIT_INPUT_18B_2))
+        );
+    }
+    #[test]
+    fn t18b_supplied_inputs_3() {
+        assert_eq!(
+            UNIT_ANSWER_18B_3,
+            shortest_path_with_quadbots(&generator(UNIT_INPUT_18B_3))
+        );
+    }
+    #[test]
+    fn t18b_supplied_inputs_4() {
+        assert_eq!(
+            UNIT_ANSWER_18B_4,
+            shortest_path_with_quadbots(&generator(UNIT_INPUT_18B_4))
         );
     }
 }
