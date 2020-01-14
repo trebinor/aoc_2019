@@ -23,7 +23,7 @@ pub fn generator(input: &str) -> Maze {
     maze
 }
 
-#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 struct Point(i8, i8, u32);
 impl Point {
     fn key_present(&self, key: char) -> bool {
@@ -94,6 +94,7 @@ pub fn shortest_path_with_quadbots(input: &Maze) -> usize {
     let mut goal = Point(0, 0, 0);
     let mut origin_x: i8 = 0;
     let mut origin_y: i8 = 0;
+    let mut key_points: Vec<Point> = Vec::new();
     for (j, y) in input.iter().enumerate() {
         for (i, _x) in y.iter().enumerate() {
             match input[j][i] {
@@ -101,25 +102,59 @@ pub fn shortest_path_with_quadbots(input: &Maze) -> usize {
                     origin_x = i as i8;
                     origin_y = j as i8;
                 }
-                key @ 'a'..='z' => goal.add_key(key),
+                key @ 'a'..='z' => {
+                    goal.add_key(key);
+                    let mut p = Point(i as i8, j as i8, 0);
+                    p.add_key(key);
+                    key_points.push(p);
+                }
                 _ => {}
             }
         }
     }
-    for o in [(-1, 1), (1, 1), (1, -1), (-1, -1)].iter() {
+    let h = input.len();
+    let w = input[0].len();
+    let mut bots: [Point; 4] = [Point(0, 0, 0); 4];
+    for (idx, o) in [(-1, -1), (1, -1), (1, 1), (-1, 1)].iter().enumerate() {
         let i = origin_x as i8 + o.0;
         let j = origin_y as i8 + o.1;
+        bots[idx] = Point(i, j, 0);
         quadmaze[j as usize][i as usize] = '@'
+    }
+    for k in key_points {
+        if k.0 < (w / 2) as i8 {
+            if k.1 < (h / 2) as i8 {
+                bots[1].2 |= k.2;
+                bots[2].2 |= k.2;
+                bots[3].2 |= k.2;
+            } else {
+                bots[0].2 |= k.2;
+                bots[1].2 |= k.2;
+                bots[2].2 |= k.2;
+            }
+        } else if k.1 < (h / 2) as i8 {
+            bots[0].2 |= k.2;
+            bots[2].2 |= k.2;
+            bots[3].2 |= k.2;
+        } else {
+            bots[0].2 |= k.2;
+            bots[1].2 |= k.2;
+            bots[3].2 |= k.2;
+        }
     }
     for o in [(0, 0), (-1, 0), (0, 1), (1, 0), (0, -1)].iter() {
         let i = origin_x as i8 + o.0;
         let j = origin_y as i8 + o.1;
         quadmaze[j as usize][i as usize] = '#'
     }
-    let origin = Point(origin_x, origin_y, 0);
-    let shortest_path =
-        pathfinding::directed::bfs::bfs(&origin, |p| p.successors(input), |p| p.2 == goal.2);
-    shortest_path.unwrap().len() - 1 // off by 1 for some reason
+    let mut paths: Vec<Vec<Point>> = Vec::new();
+    for b in bots.iter() {
+        paths.push(
+            pathfinding::directed::bfs::bfs(b, |p| p.successors(&quadmaze), |p| p.2 == goal.2)
+                .unwrap(),
+        );
+    }
+    paths.iter().map(|v| v.len() - 1).sum()
 }
 
 #[cfg(test)]
@@ -129,7 +164,7 @@ mod tests {
     use day18::shortest_path_with_quadbots;
     use std::fs;
     const ANSWER_18A: usize = 4118;
-    const ANSWER_18B: usize = 0;
+    const ANSWER_18B: usize = 1828;
     const UNIT_ANSWER_18A_1: usize = 8;
     const UNIT_ANSWER_18A_2: usize = 86;
     const UNIT_ANSWER_18A_3: usize = 132;
@@ -169,31 +204,31 @@ mod tests {
 ########################";
     const UNIT_INPUT_18B_1: &str = r"#######
 #a.#Cd#
-##@#@##
-#######
-##@#@##
+## # ##
+###@###
+## # ##
 #cB#Ab#
 #######";
     const UNIT_INPUT_18B_2: &str = r"###############
 #d.ABC.#.....a#
-######@#@######
-###############
-######@#@######
+###### # ######
+#######@#######
+###### # ######
 #b.....#.....c#
 ###############";
     const UNIT_INPUT_18B_3: &str = r"#############
 #DcBa.#.GhKl#
-#.###@#@#I###
-#e#d#####j#k#
-###C#@#@###J#
+#.### # #I###
+#e#d##@##j#k#
+###C# # ###J#
 #fEbA.#.FgHi#
 #############";
     const UNIT_INPUT_18B_4: &str = r"#############
 #g#f.D#..h#l#
 #F###e#E###.#
-#dCba@#@BcIJ#
-#############
-#nK.L@#@G...#
+#dCba # BcIJ#
+######@######
+#nK.L # G...#
 #M###N#H###.#
 #o#m..#i#jk.#
 #############";
